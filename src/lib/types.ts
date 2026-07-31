@@ -1,0 +1,97 @@
+export interface Round {
+  id: string;
+  name: string;
+  slug: 'priority' | 'r1' | 'r2';
+  sheet_id: string;
+  sheet_name: string;
+  fee_tiers: {
+    name: string;
+    price: number;
+    payment_url: string;
+  }[];
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CampusAmbassador {
+  id: string;
+  code: string;
+  name: string;
+  college: string;
+  phone?: string;
+  email?: string;
+  created_at?: string;
+}
+
+export interface CommitteePreference {
+  committee: string;
+  portfolios: string[];
+}
+
+export interface Delegate {
+  id: string;
+  round_id: string;
+  name: string;
+  dob?: string;
+  email: string;
+  whatsapp: string;
+  college: string;
+  course?: string;
+  delegation_type: string;
+  muns_attended?: string;
+  mun_achievements?: string;
+  accommodation_required?: string;
+  food_preference?: string;
+  travel_assistance?: string;
+  queries_suggestions?: string;
+  raw_ca_input?: string;
+  resolved_ca_id?: string | null;
+  resolved_ca?: CampusAmbassador | null;
+  committee_preferences?: CommitteePreference[];
+  status: 'Registered' | 'Allotted' | 'Confirmed' | 'Cancelled';
+  pass_tier?: string;
+  current_committee?: string | null;
+  current_country?: string | null;
+  latest_email_status: 'none' | 'pending' | 'sent' | 'delivered' | 'failed';
+  latest_email_sent_at?: string | null;
+  latest_email_error?: string;
+  payment_status?: 'Pending' | 'Paid';
+  synced_at?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Allotment {
+  id: string;
+  delegate_id: string;
+  committee: string;
+  country: string;
+  pass_tier?: string;
+  assigned_by: string;
+  notes?: string;
+  is_current: boolean;
+  created_at: string;
+}
+
+export interface EmailTemplate {
+  id: string;
+  round_id: string;
+  name: string;
+  subject: string;
+  html_content: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface EmailLog {
+  id: string;
+  delegate_id: string;
+  round_id: string;
+  template_name: string;
+  recipient_email: string;
+  provider_message_id?: string;
+  status: 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced';
+  error_message?: string;
+  sent_at: string;
+}
