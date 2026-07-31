@@ -238,7 +238,7 @@ export function hydrateTemplate(
   html = html.replace(/\[COMMITTEE\]/g, params.committee || 'TBD');
   html = html.replace(/\[COUNTRY\]/g, params.country || 'TBD');
   html = html.replace(/\[ROUND_NAME\]/g, params.roundName || 'Priority Round');
-  html = html.replace(/\[PAYMENT_FORM_URL\]/g, params.paymentUrl || 'https://forms.gle/payment');
+  html = html.replace(/\[PAYMENT_FORM_URL\]/g, params.paymentUrl || 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331');
   html = html.replace(/\[REFERENCE_FORM_URL\]/g, params.referenceUrl || 'https://forms.gle/reference');
   html = html.replace(/\[ACCOMMODATION\]/g, params.accommodation || 'N/A');
   html = html.replace(/\[FOOD_PREF\]/g, params.foodPref || 'Standard');

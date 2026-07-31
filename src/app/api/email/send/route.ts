@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         accommodation: del.accommodation_required || 'No',
         foodPref: del.food_preference || 'Non-Veg',
         travel: del.travel_assistance || 'No',
-        paymentUrl: 'https://forms.gle/payment',
+        paymentUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331',
         referenceUrl: 'https://forms.gle/reference',
       });
 

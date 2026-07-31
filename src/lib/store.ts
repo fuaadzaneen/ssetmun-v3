@@ -9,9 +9,9 @@ export const INITIAL_ROUNDS: Round[] = [
     sheet_id: '1wYrXTH9O9u52-HipW4cb01cETUy0SIA05khoZCaAJjA',
     sheet_name: 'Form responses 1',
     fee_tiers: [
-      { name: 'Home Delegate', price: 999, payment_url: 'https://forms.gle/home-pay' },
-      { name: 'Institutional Delegate', price: 999, payment_url: 'https://forms.gle/inst-pay' },
-      { name: 'Other Delegate', price: 1199, payment_url: 'https://forms.gle/other-pay' },
+      { name: 'Home Delegate', price: 999, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
+      { name: 'Institutional Delegate', price: 999, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
+      { name: 'Other Delegate', price: 1199, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
     ],
     is_active: true,
   },
