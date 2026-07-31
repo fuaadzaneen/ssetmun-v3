@@ -135,8 +135,8 @@ export default function DashboardPage() {
       )
     );
 
-    // Also reload from Supabase to confirm persistence
-    loadDelegates(activeRound.slug);
+    // Also reload from Supabase to confirm persistence in the background
+    // loadDelegates(activeRound.slug); // Removed this to prevent immediate revert before DB finishes or cache clears
   };
 
   // Handle CA Resolution

@@ -89,7 +89,7 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
               <p style="font-size:20px;font-weight:600;color:#f5f4ef !important;margin:0 0 8px 0;">Greetings [Delegate Name],</p>
               <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0;">
                 We are pleased to confirm your registration for the
-                <span style="color:#ccb154 !important;font-weight:600;">SSET Model United Nations Conference, 2.0</span>.
+                <span style="color:#ccb154 !important;font-weight:600;">SSET MUN 2.0</span>.
                 Your portfolio details are as follows:
               </p>
 
@@ -108,7 +108,7 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹1199</span></li>
                 </ul>
                 <p style="font-size:11px;line-height:1.5;color:#a9b3b8 !important;margin-top:10px;font-style:italic;">
-                  * Delegates who qualify as a delegation will pay ₹1299 first; the difference is refunded to your CA once delegation criteria are fulfilled.
+                  * Delegates who qualify as a delegation will pay ₹1299 first; the difference is refunded to your CA post conference.
                 </p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
                   Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 4th August, 2026</span>.
@@ -155,7 +155,7 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
               <p style="font-size:20px;font-weight:600;color:#f5f4ef !important;margin:0 0 8px 0;">Greetings [Delegate Name],</p>
               <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0;">
                 We are pleased to confirm your portfolio allotment for
-                <span style="color:#ccb154 !important;font-weight:600;">SSET Model United Nations Conference, 2.0</span>.
+                <span style="color:#ccb154 !important;font-weight:600;">SSET MUN 2.0</span>.
               </p>
 
               <div style="border-radius:16px;border:1px solid rgba(204,169,84,0.6);padding:20px;margin-top:18px;background:#0f2a2d !important;text-align:center;">
