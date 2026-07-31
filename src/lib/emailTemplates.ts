@@ -3,14 +3,14 @@ const SSET_LOGO = 'https://i.ibb.co/ksY274mG/SSET-MUN-pfp.png';
 // The "Easter Egg" Chocobun link — points to /bun page in the app
 // On PC: opens browser with full DVD-bounce animation
 // Works on mobile browser too
-const CHOCOBUN_URL = 'https://ssetmun.vercel.app/bun?u=[DELEGATE_EMAIL]';
+const CHOCOBUN_URL = 'https://ssetmun.vercel.app/bun?n=[DELEGATE_NAME_ENC]';
 const CHOCOBUN_IMG = 'https://i.ibb.co/zWq0n3Hq/pngtree-chocolate-buns-png-image-6471290.png';
 
 const EMAIL_HEAD = `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta name="supported-color-schemes" content="light">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light only">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root { color-scheme: light !important; }
@@ -28,7 +28,7 @@ const EMAIL_HEAD = `
 
 const EMAIL_HEADER = `
   <tr>
-    <td style="background-color:#0a1e21;padding:24px 32px 18px 32px;border-bottom:1px solid rgba(204,169,84,0.45);">
+    <td style="background-color:#0a1e21;background-image:linear-gradient(#0a1e21,#0a1e21);padding:24px 32px 18px 32px;border-bottom:1px solid rgba(204,169,84,0.45);">
       <table cellpadding="0" cellspacing="0" style="width:100%;">
         <tr>
           <td style="width:30%;vertical-align:middle;">
@@ -47,7 +47,7 @@ const EMAIL_HEADER = `
 
 const EMAIL_FOOTER = `
   <tr>
-    <td style="background-color:#020c0e !important;padding:28px;border-top:1px solid rgba(204,169,84,0.45);text-align:center;">
+    <td style="background-color:#020c0e;background-image:linear-gradient(#020c0e,#020c0e);padding:28px;border-top:1px solid rgba(204,169,84,0.45);text-align:center;">
       <p style="font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:#9ba3a7 !important;margin:0 0 16px 0;">BIGGER · BETTER · BENCHMARK</p>
       <p style="font-size:12px;color:#cfd4d6 !important;line-height:1.6;margin:0 0 8px 0;">
         <strong style="color:#f5f4ef !important;">In case of queries, contact:</strong><br>
@@ -73,16 +73,16 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
   <title>SSET MUN – Portfolio Allotment</title>
   ${EMAIL_HEAD}
 </head>
-<body style="background-color:#061619 !important;color:#f5f4ef !important;">
-  <table cellpadding="0" cellspacing="0" style="width:100%;padding:24px 0;background-color:#061619 !important;">
+<body style="background-color:#061619;background-image:linear-gradient(#061619,#061619);color:#f5f4ef !important;-webkit-text-fill-color:#f5f4ef !important;">
+  <table cellpadding="0" cellspacing="0" style="width:100%;padding:24px 0;background-color:#061619;background-image:linear-gradient(#061619,#061619);">
     <tr>
       <td align="center">
-        <table cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;border-radius:20px;overflow:hidden;background:radial-gradient(circle at top,#0d2729 0%,#061619 55%,#020607 100%);border:1px solid rgba(204,169,84,0.7);">
+        <table cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;border-radius:20px;overflow:hidden;background-color:#0d2729;background-image:radial-gradient(circle at top,#0d2729 0%,#061619 55%,#020607 100%);border:1px solid rgba(204,169,84,0.7);">
 
           ${EMAIL_HEADER}
 
           <tr>
-            <td style="background-color:#061619 !important;padding:24px 32px 20px 32px;">
+            <td style="background-color:#061619;background-image:linear-gradient(#061619,#061619);padding:24px 32px 20px 32px;">
               <p style="font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0;">Portfolio Allotment (Priority Round)</p>
               <p style="font-size:12px;color:#cfd4d6 !important;margin:6px 0 20px 0;">September 11th - 13th, 2026</p>
 
@@ -139,16 +139,16 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
   <title>SSET MUN – Portfolio Allotment</title>
   ${EMAIL_HEAD}
 </head>
-<body style="background-color:#061619 !important;color:#f5f4ef !important;">
-  <table cellpadding="0" cellspacing="0" style="width:100%;padding:24px 0;background-color:#061619 !important;">
+<body style="background-color:#061619;background-image:linear-gradient(#061619,#061619);color:#f5f4ef !important;-webkit-text-fill-color:#f5f4ef !important;">
+  <table cellpadding="0" cellspacing="0" style="width:100%;padding:24px 0;background-color:#061619;background-image:linear-gradient(#061619,#061619);">
     <tr>
       <td align="center">
-        <table cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;border-radius:20px;overflow:hidden;background:radial-gradient(circle at top,#0d2729 0%,#061619 55%,#020607 100%);border:1px solid rgba(204,169,84,0.7);">
+        <table cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;border-radius:20px;overflow:hidden;background-color:#0d2729;background-image:radial-gradient(circle at top,#0d2729 0%,#061619 55%,#020607 100%);border:1px solid rgba(204,169,84,0.7);">
 
           ${EMAIL_HEADER}
 
           <tr>
-            <td style="background-color:#061619 !important;padding:24px 32px 20px 32px;">
+            <td style="background-color:#061619;background-image:linear-gradient(#061619,#061619);padding:24px 32px 20px 32px;">
               <p style="font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0;">Portfolio Allotment ([ROUND_NAME])</p>
               <p style="font-size:12px;color:#cfd4d6 !important;margin:6px 0 20px 0;">September 11th - 13th, 2026</p>
 
@@ -234,7 +234,7 @@ export function hydrateTemplate(
 ): string {
   let html = rawTemplate;
   html = html.replace(/\[Delegate Name\]/g, params.delegateName || 'Delegate');
-  html = html.replace(/\[DELEGATE_EMAIL\]/g, params.delegateEmail ? encodeURIComponent(params.delegateEmail) : '');
+  html = html.replace(/\[DELEGATE_NAME_ENC\]/g, encodeURIComponent(params.delegateName || 'Delegate'));
   html = html.replace(/\[COMMITTEE\]/g, params.committee || 'TBD');
   html = html.replace(/\[COUNTRY\]/g, params.country || 'TBD');
   html = html.replace(/\[ROUND_NAME\]/g, params.roundName || 'Priority Round');
