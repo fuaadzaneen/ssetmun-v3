@@ -25,7 +25,6 @@ export async function POST(req: Request) {
         delegate_id: delegateId,
         committee,
         country,
-        pass_tier: passTier,
         assigned_by: assignedBy,
         notes: notes || '',
         is_current: true,
