@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const loadDelegates = async (roundSlug: string) => {
     setIsLoadingDelegates(true);
     try {
-      const res = await fetch(`/api/delegates?roundSlug=${roundSlug}`);
+      const res = await fetch(`/api/delegates?roundSlug=${roundSlug}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
         setDelegates(data.delegates);
