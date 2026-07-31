@@ -111,9 +111,13 @@ export default function DashboardPage() {
       const result = await res.json();
       if (!result.success) {
         console.error('Allotment failed:', result.error);
+        alert('Failed to save allotment: ' + result.error);
+        return; // Don't optimistically update if it failed
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert('An error occurred while saving: ' + err.message);
+      return;
     }
 
     // Optimistically update local state immediately for snappy UI
