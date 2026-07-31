@@ -35,6 +35,7 @@ export async function POST(req: Request) {
       const templateContent = templateType === 'priority' ? PRIORITY_EMAIL_TEMPLATE : MULTI_ROUND_EMAIL_TEMPLATE;
       const html = hydrateTemplate(templateContent, {
         delegateName: del.name,
+        delegateEmail: del.email,
         committee: del.current_committee || del.committee || 'UNGA-DISEC',
         country: del.current_country || del.country || 'India',
         roundName: roundSlug === 'priority' ? 'Priority Round' : roundSlug === 'r1' ? 'Round 1' : 'Round 2',

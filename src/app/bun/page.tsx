@@ -1,4 +1,12 @@
-export default function BunPage() {
+"use client";
+
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+
+function BunContent() {
+  const searchParams = useSearchParams();
+  const userEmail = searchParams.get('u');
+
   return (
     <>
       <style>{`
@@ -26,7 +34,37 @@ export default function BunPage() {
           text-transform: uppercase;
           pointer-events: none;
         }
+        #center-text {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          color: rgba(204,169,84,0.3);
+          font-family: serif;
+          pointer-events: none;
+          z-index: 10;
+        }
+        #center-text h1 {
+          font-size: 2.5rem;
+          font-weight: normal;
+          letter-spacing: 0.1em;
+          margin-bottom: 0.5rem;
+          color: rgba(245,244,239,0.8);
+        }
+        #center-text p {
+          font-size: 1.2rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+        }
       `}</style>
+
+      {userEmail && (
+        <div id="center-text">
+          <h1>{userEmail}</h1>
+          <p>You found the Chocobun</p>
+        </div>
+      )}
 
       <img
         id="bun"
@@ -81,5 +119,13 @@ export default function BunPage() {
         });
       `}} />
     </>
+  );
+}
+
+export default function BunPage() {
+  return (
+    <Suspense fallback={<div></div>}>
+      <BunContent />
+    </Suspense>
   );
 }

@@ -38,6 +38,7 @@ export const EmailModal: React.FC<EmailModalProps> = ({
     const raw = templateType === 'priority' ? PRIORITY_EMAIL_TEMPLATE : MULTI_ROUND_EMAIL_TEMPLATE;
     return hydrateTemplate(raw, {
       delegateName: currentPreviewDelegate.name,
+      delegateEmail: currentPreviewDelegate.email,
       committee: currentPreviewDelegate.current_committee || 'UNGA-DISEC',
       country: currentPreviewDelegate.current_country || 'India',
       roundName: roundSlug === 'priority' ? 'Priority Round' : roundSlug === 'r1' ? 'Round 1' : 'Round 2',

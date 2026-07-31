@@ -3,7 +3,7 @@ const SSET_LOGO = 'https://i.ibb.co/ksY274mG/SSET-MUN-pfp.png';
 // The "Easter Egg" Chocobun link — points to /bun page in the app
 // On PC: opens browser with full DVD-bounce animation
 // Works on mobile browser too
-const CHOCOBUN_URL = 'https://ssetmun.vercel.app/bun';
+const CHOCOBUN_URL = 'https://ssetmun.vercel.app/bun?u=[DELEGATE_EMAIL]';
 const CHOCOBUN_IMG = 'https://i.ibb.co/zWq0n3Hq/pngtree-chocolate-buns-png-image-6471290.png';
 
 const EMAIL_HEAD = `
@@ -15,13 +15,13 @@ const EMAIL_HEAD = `
   <style>
     :root { color-scheme: light !important; }
     body,table,td,p,a { margin:0; padding:0; }
-    body { background-color:#061619 !important; font-family:"Cinzel","Times New Roman",serif !important; color:#f5f4ef !important; }
+    body { background-color:#061619 !important; background-image: linear-gradient(#061619, #061619) !important; font-family:"Cinzel","Times New Roman",serif !important; color:#f5f4ef !important; -webkit-text-fill-color:#f5f4ef !important; }
     a { text-decoration:none !important; }
     img { border:0; display:block; }
     @media (prefers-color-scheme:dark) {
-      body,.wrapper { background-color:#061619 !important; }
-      .inner { background-color:#061619 !important; }
-      .footer-block { background-color:#020c0e !important; }
+      body,.wrapper { background-color:#061619 !important; background-image: linear-gradient(#061619, #061619) !important; }
+      .inner { background-color:#061619 !important; background-image: linear-gradient(#061619, #061619) !important; }
+      .footer-block { background-color:#020c0e !important; background-image: linear-gradient(#020c0e, #020c0e) !important; }
     }
   </style>
 `;
@@ -220,6 +220,7 @@ export function hydrateTemplate(
   rawTemplate: string,
   params: {
     delegateName: string;
+    delegateEmail?: string;
     committee: string;
     country: string;
     roundName?: string;
@@ -233,6 +234,7 @@ export function hydrateTemplate(
 ): string {
   let html = rawTemplate;
   html = html.replace(/\[Delegate Name\]/g, params.delegateName || 'Delegate');
+  html = html.replace(/\[DELEGATE_EMAIL\]/g, params.delegateEmail ? encodeURIComponent(params.delegateEmail) : '');
   html = html.replace(/\[COMMITTEE\]/g, params.committee || 'TBD');
   html = html.replace(/\[COUNTRY\]/g, params.country || 'TBD');
   html = html.replace(/\[ROUND_NAME\]/g, params.roundName || 'Priority Round');
