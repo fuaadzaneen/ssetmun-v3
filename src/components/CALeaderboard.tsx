@@ -48,9 +48,9 @@ export const CALeaderboard: React.FC<CALeaderboardProps> = ({
         </div>
 
         {/* Leaderboard Table */}
-        <div className="bg-sset-bg border border-sset-border rounded-xl overflow-hidden text-xs">
-          <table className="w-full text-left">
-            <thead className="bg-sset-deep border-b border-sset-border text-sset-gold uppercase font-cinzel text-[10px]">
+        <div className="bg-sset-bg border border-sset-border rounded-xl overflow-y-auto overflow-x-hidden text-xs max-h-[60vh]">
+          <table className="w-full text-left relative">
+            <thead className="bg-sset-deep border-b border-sset-border text-sset-gold uppercase font-cinzel text-[10px] sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="py-2.5 px-4">Rank</th>
                 <th className="py-2.5 px-4">Campus Ambassador</th>
