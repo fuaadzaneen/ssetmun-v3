@@ -72,6 +72,7 @@ export async function POST(req: Request) {
           current_country: country,
           pass_tier: passTier || undefined,
           status: 'Allotted',
+          manual_allotment: true,
         })
         .eq('id', delegateId)
         .select(); // <-- select() forces Supabase to return what was actually updated

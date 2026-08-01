@@ -35,7 +35,14 @@ export async function POST(req: Request) {
           .maybeSingle();
 
         if (existing) {
-          // Idempotent update: update form fields, preserve allotment & resolved_ca_id
+          // Skip update if this delegate was manually allotted OR is already allotted/confirmed
+          // (double guard: manual_allotment flag + status check so legacy rows are also protected)
+          const isProtected = existing.manual_allotment === true || existing.status === 'Allotted' || existing.status === 'Confirmed';
+          if (isProtected) {
+            console.log('[sync] Updating protected delegate but preserving allotment state:', existing.email);
+          }
+
+          // Idempotent update: refresh form fields, preserve allotment & resolved_ca_id
           const { error } = await supabaseAdmin
             .from('delegates')
             .update({
@@ -53,12 +60,22 @@ export async function POST(req: Request) {
               food_preference: row.food_preference,
               travel_assistance: row.travel_assistance,
               queries_suggestions: row.queries_suggestions,
+              // Always preserve allotment fields and the protection flag
+              current_committee: existing.current_committee,
+              current_country: existing.current_country,
+              status: existing.status,
+              pass_tier: existing.pass_tier,
+              manual_allotment: existing.manual_allotment ?? false,
               synced_at: new Date().toISOString(),
+              dummy_test: 'synced',
             })
             .eq('id', existing.id);
 
-          if (error) console.error('Error updating delegate:', error);
-          else updated++;
+          if (error) {
+            console.error('Error updating delegate:', error);
+          } else {
+            updated++;
+          }
         } else {
           // Insert new delegate
           const { error } = await supabaseAdmin.from('delegates').insert({

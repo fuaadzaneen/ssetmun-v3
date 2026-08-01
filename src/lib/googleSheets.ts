@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import { CommitteePreference } from './types';
+import { normalizeCommitteeName } from './committees';
 
 export interface ParsedSheetRow {
   name: string;
@@ -68,23 +69,47 @@ export async function fetchSheetData(
     const comm2 = clean(row[12]);
     const comm3 = clean(row[13]);
 
+    const getPortfolios = (rawComm: string, prefLevel: number) => {
+      if (!rawComm) return [];
+      const normalized = normalizeCommitteeName(rawComm);
+      const searchKey = normalized === 'UNGA-DISEC' ? 'unga' : normalized.toLowerCase();
+      
+      const levels = [
+        ['first', '1st'],
+        ['second', '2nd'],
+        ['third', '3rd']
+      ][prefLevel - 1];
+
+      const startIdx = headers.findIndex((h) => {
+        const lower = h.toLowerCase();
+        const hasCommittee = lower.includes(searchKey);
+        const hasLevel = levels.some((lvl) => lower.includes(lvl));
+        return hasCommittee && hasLevel;
+      });
+
+      if (startIdx !== -1) {
+        return [clean(row[startIdx]), clean(row[startIdx + 1]), clean(row[startIdx + 2])].filter(Boolean);
+      }
+      return [];
+    };
+
     const committee_preferences: CommitteePreference[] = [];
     if (comm1) {
       committee_preferences.push({
-        committee: comm1,
-        portfolios: [clean(row[14]), clean(row[15]), clean(row[16])].filter(Boolean),
+        committee: normalizeCommitteeName(comm1),
+        portfolios: getPortfolios(comm1, 1),
       });
     }
     if (comm2) {
       committee_preferences.push({
-        committee: comm2,
-        portfolios: [clean(row[17]), clean(row[18]), clean(row[19])].filter(Boolean),
+        committee: normalizeCommitteeName(comm2),
+        portfolios: getPortfolios(comm2, 2),
       });
     }
     if (comm3) {
       committee_preferences.push({
-        committee: comm3,
-        portfolios: [clean(row[20]), clean(row[21]), clean(row[22])].filter(Boolean),
+        committee: normalizeCommitteeName(comm3),
+        portfolios: getPortfolios(comm3, 3),
       });
     }
 

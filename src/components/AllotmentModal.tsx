@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check, Eye, Loader2 } from 'lucide-react';
 import { Delegate } from '@/lib/types';
+import { COMMITTEES, normalizeCommitteeName } from '@/lib/committees';
 
 interface AllotmentModalProps {
   delegate: Delegate | null;
@@ -15,39 +16,6 @@ interface AllotmentModalProps {
     notes: string;
   }) => Promise<void>;
 }
-
-const COMMITTEES = ['UNCND', 'UNCSW', 'WHO(SCHOOL)', 'IPC', 'UNGA-DISEC', 'AIPPM'];
-
-// Maps old Google Form committee option names → current committee names
-// (handles renames between when forms were created and now)
-const COMMITTEE_NAME_MAP: Record<string, string> = {
-  'United Nations Commission on Narcotic Drugs': 'UNCND',
-  'United Nations Commission on the Status of Women': 'UNCSW',
-  'World Health Organisation': 'WHO(SCHOOL)',
-  'World Health Organization': 'WHO(SCHOOL)',
-  'International Press Corps': 'IPC',
-  'United Nations General Assembly - Disarmament and International Security': 'UNGA-DISEC',
-  'All India Political Parties Meet': 'AIPPM',
-  // Handle any partial/abbreviated variations
-  'DISEC': 'UNGA-DISEC',
-  'UNGA DISEC': 'UNGA-DISEC',
-  'WHO': 'WHO(SCHOOL)',
-};
-
-const normalizeCommitteeName = (raw: string): string => {
-  if (!raw) return raw;
-  const trimmed = raw.trim();
-  // Exact match in map
-  if (COMMITTEE_NAME_MAP[trimmed]) return COMMITTEE_NAME_MAP[trimmed];
-  // Case-insensitive match
-  const lower = trimmed.toLowerCase();
-  const found = Object.entries(COMMITTEE_NAME_MAP).find(([k]) => k.toLowerCase() === lower);
-  if (found) return found[1];
-  // Already a valid current name
-  if (COMMITTEES.includes(trimmed)) return trimmed;
-  // Return raw as fallback (so it's still visible)
-  return trimmed;
-};
 
 export const AllotmentModal: React.FC<AllotmentModalProps> = ({
   delegate,
@@ -196,11 +164,11 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
               disabled={isSaving}
               className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text focus:outline-none focus:border-sset-gold disabled:opacity-60"
             >
-              <option value="Individual (₹1299)">Individual Delegate (₹1299)</option>
-              <option value="School (₹1199)">School Delegate (₹1199)</option>
-              <option value="Delegation (₹1199)">Delegation (₹1199)</option>
-              <option value="Home Delegate (₹999)">Home Delegate (₹999)</option>
-              <option value="Institutional (₹999)">Institutional Delegate (₹999)</option>
+              <option value="Individual Delegate">Individual Delegate (₹1299)</option>
+              <option value="School Delegate">School Delegate (₹1199)</option>
+              <option value="Other Delegate">Other Delegate (₹1199)</option>
+              <option value="Home Delegate">Home Delegate (₹999)</option>
+              <option value="Institutional Delegate">Institutional Delegate (₹999)</option>
             </select>
           </div>
 

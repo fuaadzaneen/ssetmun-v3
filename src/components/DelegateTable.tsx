@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, CheckCircle, Clock, AlertTriangle, Send, Edit, History, ShieldCheck, UserX } from 'lucide-react';
 import { Delegate, CampusAmbassador } from '@/lib/types';
+import { normalizeCommitteeName } from '@/lib/committees';
 
 interface DelegateTableProps {
   delegates: Delegate[];
@@ -228,7 +229,7 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
                           <div className="space-y-2 text-[11px]">
                             {d.committee_preferences.map((pref, idx) => (
                               <div key={idx} className="bg-sset-bg p-1.5 rounded border border-sset-border">
-                                <span className="font-semibold text-sset-gold">#{idx + 1} {pref.committee}</span>
+                                <span className="font-semibold text-sset-gold">#{idx + 1} {normalizeCommitteeName(pref.committee)}</span>
                                 <span className="text-sset-muted block truncate max-w-[160px] mt-0.5">
                                   {pref.portfolios.join(', ') || 'No portfolio'}
                                 </span>
