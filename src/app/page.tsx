@@ -102,6 +102,7 @@ export default function DashboardPage() {
     passTier: string;
     notes: string;
   }) => {
+    let savedDelegate: any = null;
     try {
       const res = await fetch('/api/allot', {
         method: 'POST',
@@ -111,8 +112,12 @@ export default function DashboardPage() {
       const result = await res.json();
       if (!result.success) {
         console.error('Allotment failed:', result.error);
-        alert('Failed to save allotment: ' + result.error);
-        return; // Don't optimistically update if it failed
+        alert('⚠️ Allotment failed:\n\n' + result.error);
+        return; // Don't update UI if DB save failed
+      }
+      // If the server returned the updated delegate, use it
+      if (result.delegate) {
+        savedDelegate = result.delegate;
       }
     } catch (err: any) {
       console.error(err);
@@ -120,24 +125,28 @@ export default function DashboardPage() {
       return;
     }
 
-    // Optimistically update local state immediately for snappy UI
+    // Immediately update local state for snappy UI
     setDelegates((prev) =>
       prev.map((d) =>
         d.id === data.delegateId
           ? {
               ...d,
+              ...(savedDelegate || {}),
               current_committee: data.committee,
               current_country: data.country,
               pass_tier: data.passTier,
-              status: 'Allotted',
+              status: 'Allotted' as const,
             }
           : d
       )
     );
 
-    // Also reload from Supabase to confirm persistence in the background
-    // loadDelegates(activeRound.slug); // Removed this to prevent immediate revert before DB finishes or cache clears
+    // After 1.5s, reload from Supabase to confirm the data actually persisted
+    setTimeout(async () => {
+      await loadDelegates(activeRound.slug);
+    }, 1500);
   };
+
 
   // Handle CA Resolution
   const handleResolveCA = async (data: {

@@ -140,11 +140,11 @@ export const INITIAL_DELEGATES: Delegate[] = [
     raw_ca_input: 'SRM CA / Pradeep',
     resolved_ca_id: '00000000-0000-4000-8000-000000000103',
     committee_preferences: [
-      { committee: 'IPP', portfolios: ['Photographer', 'Journalist'] },
+      { committee: 'IPC', portfolios: ['Photographer', 'Journalist'] },
     ],
     status: 'Allotted',
     pass_tier: 'Institutional Delegate',
-    current_committee: 'IPP',
+    current_committee: 'IPC',
     current_country: 'Photographer',
     latest_email_status: 'none',
     latest_email_sent_at: null,
@@ -194,7 +194,7 @@ export const INITIAL_ALLOTMENTS: Allotment[] = [
   {
     id: 'a-2',
     delegate_id: 'd-2',
-    committee: 'IPP',
+    committee: 'IPC',
     country: 'Photographer',
     pass_tier: 'Institutional Delegate',
     assigned_by: 'Admin',

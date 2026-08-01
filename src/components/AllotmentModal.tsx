@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, Check, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Check, Eye, Loader2 } from 'lucide-react';
 import { Delegate } from '@/lib/types';
 
 interface AllotmentModalProps {
@@ -13,42 +13,62 @@ interface AllotmentModalProps {
     country: string;
     passTier: string;
     notes: string;
-  }) => void;
+  }) => Promise<void>;
 }
 
-const COMMITTEES = ['UNGA-DISEC', 'UNSC', 'UNHRC', 'IPP', 'UNODC', 'AIPPM'];
+const COMMITTEES = ['UNCND', 'UNCSW', 'WHO(SCHOOL)', 'IPC', 'UNGA-DISEC', 'AIPPM'];
 
 export const AllotmentModal: React.FC<AllotmentModalProps> = ({
   delegate,
   onClose,
   onSaveAllotment,
 }) => {
+  const [committee, setCommittee] = useState('UNGA-DISEC');
+  const [country, setCountry] = useState('');
+  const [passTier, setPassTier] = useState('Institutional Delegate');
+  const [notes, setNotes] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Re-initialize form every time the delegate changes
+  // This fixes the stale-state bug where opening a different delegate
+  // would show the previous delegate's values
+  useEffect(() => {
+    if (delegate) {
+      setCommittee(
+        delegate.current_committee ||
+          delegate.committee_preferences?.[0]?.committee ||
+          'UNGA-DISEC'
+      );
+      setCountry(
+        delegate.current_country ||
+          delegate.committee_preferences?.[0]?.portfolios?.[0] ||
+          ''
+      );
+      setPassTier(delegate.pass_tier || 'Institutional Delegate');
+      setNotes('');
+    }
+  }, [delegate?.id]); // only re-run when the delegate ID actually changes
+
   if (!delegate) return null;
 
-  const [committee, setCommittee] = useState(
-    delegate.current_committee ||
-      (delegate.committee_preferences?.[0]?.committee) ||
-      'UNGA-DISEC'
-  );
-  const [country, setCountry] = useState(
-    delegate.current_country ||
-      (delegate.committee_preferences?.[0]?.portfolios?.[0]) ||
-      ''
-  );
-  const [passTier, setPassTier] = useState(delegate.pass_tier || 'Institutional Delegate');
-  const [notes, setNotes] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!committee || !country) return;
-    onSaveAllotment({
-      delegateId: delegate.id,
-      committee,
-      country,
-      passTier,
-      notes,
-    });
-    onClose();
+    setIsSaving(true);
+    try {
+      await onSaveAllotment({
+        delegateId: delegate.id,
+        committee,
+        country,
+        passTier,
+        notes,
+      });
+      onClose(); // Only close AFTER save succeeds
+    } catch {
+      // error already shown by parent
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -56,7 +76,8 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
       <div className="bg-sset-card border border-sset-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5 relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-sset-muted hover:text-sset-text"
+          disabled={isSaving}
+          className="absolute top-4 right-4 text-sset-muted hover:text-sset-text disabled:opacity-40"
         >
           <X className="w-5 h-5" />
         </button>
@@ -68,6 +89,7 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
           <p className="text-xs text-sset-muted">
             Assigning portfolio for <span className="text-sset-text font-semibold">{delegate.name}</span> ({delegate.college})
           </p>
+          <p className="text-[10px] text-sset-muted/60 mt-0.5 font-mono">ID: {delegate.id}</p>
         </div>
 
         {/* Delegate Preferences Box */}
@@ -95,7 +117,8 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
             <select
               value={committee}
               onChange={(e) => setCommittee(e.target.value)}
-              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text focus:outline-none focus:border-sset-gold"
+              disabled={isSaving}
+              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text focus:outline-none focus:border-sset-gold disabled:opacity-60"
             >
               {COMMITTEES.map((c) => (
                 <option key={c} value={c}>
@@ -115,7 +138,8 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
               placeholder="e.g. France, India, Journalist"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text placeholder:text-sset-muted focus:outline-none focus:border-sset-gold"
+              disabled={isSaving}
+              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text placeholder:text-sset-muted focus:outline-none focus:border-sset-gold disabled:opacity-60"
               required
             />
           </div>
@@ -133,7 +157,8 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
             <select
               value={passTier}
               onChange={(e) => setPassTier(e.target.value)}
-              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text focus:outline-none focus:border-sset-gold"
+              disabled={isSaving}
+              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text focus:outline-none focus:border-sset-gold disabled:opacity-60"
             >
               <option value="Individual (₹1299)">Individual Delegate (₹1299)</option>
               <option value="School (₹1199)">School Delegate (₹1199)</option>
@@ -152,8 +177,9 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
               placeholder="e.g. Allotted 1st choice / Reallotted after drop"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              disabled={isSaving}
               rows={2}
-              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text placeholder:text-sset-muted focus:outline-none focus:border-sset-gold resize-none"
+              className="w-full bg-sset-bg border border-sset-border rounded-lg p-2.5 text-sset-text placeholder:text-sset-muted focus:outline-none focus:border-sset-gold resize-none disabled:opacity-60"
             />
           </div>
 
@@ -161,16 +187,27 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-sset-border text-sset-muted hover:text-sset-text"
+              disabled={isSaving}
+              className="px-4 py-2 rounded-lg border border-sset-border text-sset-muted hover:text-sset-text disabled:opacity-40"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-sset-gold text-sset-bg font-bold hover:bg-sset-goldLight transition"
+              disabled={isSaving}
+              className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-sset-gold text-sset-bg font-bold hover:bg-sset-goldLight transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Check className="w-4 h-4" />
-              <span>Save Allotment</span>
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Save Allotment</span>
+                </>
+              )}
             </button>
           </div>
         </form>
