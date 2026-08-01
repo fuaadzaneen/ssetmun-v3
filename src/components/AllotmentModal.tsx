@@ -18,6 +18,37 @@ interface AllotmentModalProps {
 
 const COMMITTEES = ['UNCND', 'UNCSW', 'WHO(SCHOOL)', 'IPC', 'UNGA-DISEC', 'AIPPM'];
 
+// Maps old Google Form committee option names → current committee names
+// (handles renames between when forms were created and now)
+const COMMITTEE_NAME_MAP: Record<string, string> = {
+  'United Nations Commission on Narcotic Drugs': 'UNCND',
+  'United Nations Commission on the Status of Women': 'UNCSW',
+  'World Health Organisation': 'WHO(SCHOOL)',
+  'World Health Organization': 'WHO(SCHOOL)',
+  'International Press Corps': 'IPC',
+  'United Nations General Assembly - Disarmament and International Security': 'UNGA-DISEC',
+  'All India Political Parties Meet': 'AIPPM',
+  // Handle any partial/abbreviated variations
+  'DISEC': 'UNGA-DISEC',
+  'UNGA DISEC': 'UNGA-DISEC',
+  'WHO': 'WHO(SCHOOL)',
+};
+
+const normalizeCommitteeName = (raw: string): string => {
+  if (!raw) return raw;
+  const trimmed = raw.trim();
+  // Exact match in map
+  if (COMMITTEE_NAME_MAP[trimmed]) return COMMITTEE_NAME_MAP[trimmed];
+  // Case-insensitive match
+  const lower = trimmed.toLowerCase();
+  const found = Object.entries(COMMITTEE_NAME_MAP).find(([k]) => k.toLowerCase() === lower);
+  if (found) return found[1];
+  // Already a valid current name
+  if (COMMITTEES.includes(trimmed)) return trimmed;
+  // Return raw as fallback (so it's still visible)
+  return trimmed;
+};
+
 export const AllotmentModal: React.FC<AllotmentModalProps> = ({
   delegate,
   onClose,
@@ -34,9 +65,11 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
   // would show the previous delegate's values
   useEffect(() => {
     if (delegate) {
+      // Normalize the preference committee name in case it's an old full-name from the Google Form
+      const firstPrefCommittee = delegate.committee_preferences?.[0]?.committee;
       setCommittee(
         delegate.current_committee ||
-          delegate.committee_preferences?.[0]?.committee ||
+          (firstPrefCommittee ? normalizeCommitteeName(firstPrefCommittee) : null) ||
           'UNGA-DISEC'
       );
       setCountry(
@@ -99,12 +132,15 @@ export const AllotmentModal: React.FC<AllotmentModalProps> = ({
               <Eye className="w-3.5 h-3.5" />
               <span>Submitted Preferences:</span>
             </div>
-            {delegate.committee_preferences.map((pref, idx) => (
-              <div key={idx} className="flex justify-between items-center text-sset-subtle bg-sset-card/60 p-2 rounded border border-sset-border/50">
-                <span className="font-semibold text-sset-gold">{pref.committee}:</span>
-                <span className="text-sset-text font-medium">{pref.portfolios.join(', ') || 'No portfolio list'}</span>
-              </div>
-            ))}
+            {delegate.committee_preferences.map((pref, idx) => {
+              const displayCommittee = normalizeCommitteeName(pref.committee);
+              return (
+                <div key={idx} className="flex justify-between items-center text-sset-subtle bg-sset-card/60 p-2 rounded border border-sset-border/50">
+                  <span className="font-semibold text-sset-gold">{displayCommittee}:</span>
+                  <span className="text-sset-text font-medium">{pref.portfolios.join(', ') || 'No portfolio list'}</span>
+                </div>
+              );
+            })}
           </div>
         )}
 

@@ -49,11 +49,11 @@ export async function POST(req: Request) {
       }
 
       // 2. Insert new allotment history row
+      // Note: pass_tier is stored on the delegates table, not the allotments table
       const { error: insertError } = await supabaseAdmin.from('allotments').insert({
         delegate_id: delegateId,
         committee,
         country,
-        pass_tier: passTier,
         assigned_by: assignedBy,
         notes: notes || '',
         is_current: true,
