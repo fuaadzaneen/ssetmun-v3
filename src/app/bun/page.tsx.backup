@@ -1,0 +1,265 @@
+"use client";
+
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useState, useRef, useEffect } from 'react';
+import confetti from 'canvas-confetti';
+
+function BunContent() {
+  const searchParams = useSearchParams();
+  const userName = searchParams.get('n') || searchParams.get('u') || 'Delegate';
+  
+  const [isRevealed, setIsRevealed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const triggerConfetti = () => {
+    const duration = 3000;
+    const end = Date.now() + duration;
+
+    const frame = () => {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#ccb154', '#ffffff', '#aa8022']
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#ccb154', '#ffffff', '#aa8022']
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+  };
+
+  const handleReveal = () => {
+    setIsRevealed(true);
+    triggerConfetti();
+    if (videoRef.current) {
+      // Ensuring video plays when revealed
+      videoRef.current.play().catch(e => console.log("Video playback error:", e));
+    }
+  };
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; background: #061619; color: #f5f4ef; font-family: sans-serif; overflow: hidden; }
+        
+        .container {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 10;
+        }
+
+        .overlay {
+          position: fixed;
+          inset: 0;
+          background: ${isRevealed ? 'rgba(6, 22, 25, 0.90)' : 'radial-gradient(circle at center, #0d2729 0%, #061619 100%)'};
+          z-index: 2;
+          transition: background 1.5s ease;
+          pointer-events: none;
+        }
+
+        /* Initial Greeting Box */
+        .content-box {
+          position: relative;
+          z-index: 20;
+          text-align: center;
+          background: rgba(13, 39, 41, 0.7);
+          border: 1px solid rgba(204, 169, 84, 0.5);
+          padding: 3.5rem 2.5rem;
+          border-radius: 28px;
+          backdrop-filter: blur(16px);
+          box-shadow: 0 15px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(204,169,84,0.1);
+          max-width: 500px;
+          width: 90%;
+          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: ${isRevealed ? 'translateY(100vh) scale(0.8)' : 'translateY(0) scale(1)'};
+          opacity: ${isRevealed ? '0' : '1'};
+          pointer-events: ${isRevealed ? 'none' : 'auto'};
+        }
+
+        /* Video Card */
+        .panda-card {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(${isRevealed ? '1' : '0.7'});
+          opacity: ${isRevealed ? '1' : '0'};
+          pointer-events: ${isRevealed ? 'auto' : 'none'};
+          z-index: 30;
+          background: linear-gradient(145deg, #ffffff, #f0f0f0);
+          border-radius: 28px;
+          padding: 2.5rem;
+          text-align: center;
+          box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 120px rgba(204,169,84,0.3);
+          transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+          max-width: 90vw;
+          width: 480px;
+        }
+
+        .panda-video {
+          width: 100%;
+          height: auto;
+          border-radius: 16px;
+          margin-bottom: 1.8rem;
+          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+          background: #000;
+        }
+
+        .panda-card-text {
+          color: #1a1a1a;
+          font-family: "Cinzel", serif;
+          font-size: 1.6rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #d4af37, #aa8022);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin-bottom: 0.5rem;
+        }
+        
+        .panda-card-subtext {
+          color: #555;
+          font-size: 1.05rem;
+          line-height: 1.5;
+          margin-top: 0.5rem;
+          font-weight: 500;
+        }
+
+        .greeting {
+          font-family: "Cinzel", serif;
+          font-size: 2.4rem;
+          font-weight: 700;
+          color: #f5f4ef;
+          margin-bottom: 1.2rem;
+          text-shadow: 0 4px 15px rgba(204,169,84,0.3);
+        }
+
+        .message {
+          color: #dfe4e6;
+          line-height: 1.7;
+          margin-bottom: 2.5rem;
+          font-size: 1.15rem;
+        }
+
+        .play-btn {
+          background: linear-gradient(135deg, #d4af37, #aa8022);
+          color: #000;
+          border: none;
+          padding: 16px 42px;
+          font-size: 1.1rem;
+          font-weight: bold;
+          font-family: "Cinzel", serif;
+          border-radius: 50px;
+          cursor: pointer;
+          box-shadow: 0 6px 20px rgba(204,169,84,0.4);
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .play-btn::after {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: rgba(255,255,255,0.2);
+          transform: rotate(45deg) translateY(-100%);
+          transition: transform 0.6s ease;
+        }
+
+        .play-btn:hover {
+          transform: scale(1.05) translateY(-3px);
+          box-shadow: 0 10px 25px rgba(204,169,84,0.6);
+        }
+
+        .play-btn:hover::after {
+          transform: rotate(45deg) translateY(100%);
+        }
+
+        .watermark {
+          position: fixed;
+          bottom: 24px;
+          left: 50%;
+          transform: translateX(-50%);
+          font-family: "Cinzel", serif;
+          font-size: 12px;
+          color: rgba(204, 169, 84, 0.4);
+          letter-spacing: 0.25em;
+          z-index: 20;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+      `}} />
+
+      <div className="overlay" />
+
+      {/* The Initial Greeting */}
+      <div className="container">
+        <div className="content-box">
+          <h1 className="greeting">Hello, {userName}!</h1>
+          <p className="message">
+            Someone very special has been eagerly waiting to give you a warm welcome to SSET MUN 2.0.
+          </p>
+          <button className="play-btn" onClick={handleReveal}>
+            Accept the Greeting
+          </button>
+        </div>
+      </div>
+
+      {/* The Reveal with Video */}
+      <div className="panda-card">
+        <video 
+          ref={videoRef}
+          src="/easter-egg.mp4" 
+          className="panda-video"
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+        />
+        <h2 className="panda-card-text">A Chocobun just for you! 🐼🍫</h2>
+        <p className="panda-card-subtext">We are incredibly excited to have you onboard. See you at the conference!</p>
+        
+        <button 
+          onClick={() => setIsRevealed(false)}
+          style={{
+            marginTop: '2rem',
+            background: 'none',
+            border: 'none',
+            color: '#aa8022',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            textDecoration: 'underline',
+            fontSize: '0.95rem'
+          }}
+        >
+          Close Greeting
+        </button>
+      </div>
+
+      <div className="watermark">SSET MUN 2.0</div>
+    </>
+  );
+}
+
+export default function BunPage() {
+  return (
+    <Suspense fallback={<div style={{ background: '#061619', width: '100vw', height: '100vh' }}></div>}>
+      <BunContent />
+    </Suspense>
+  );
+}
