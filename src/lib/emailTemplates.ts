@@ -111,7 +111,7 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                   * Delegates who qualify as a delegation will pay ₹1299 first; the difference is refunded to your CA post conference.
                 </p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
-                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 4th August, 2026</span>.
+                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 5th August, 2026</span>.
                   Failure to pay will result in cancellation of your portfolio.
                 </p>
               </div>
@@ -195,7 +195,7 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 8px 0;">Fee &amp; Deadline</p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0;">
                   Complete payment for <span style="color:#ccb154 !important;font-weight:600;">[PASS_TIER]</span> by
-                  <span style="color:#ccb154 !important;font-weight:600;">Wednesday, 11:59 PM</span>.
+                  <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 5th August, 2026</span>.
                 </p>
               </div>
 
