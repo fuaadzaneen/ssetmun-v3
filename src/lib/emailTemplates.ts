@@ -195,7 +195,7 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 8px 0;">Fee &amp; Deadline</p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0;">
                   Complete payment for <span style="color:#ccb154 !important;font-weight:600;">[PASS_TIER]</span> by
-                  <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 4th August, 2026</span>.
+                  <span style="color:#ccb154 !important;font-weight:600;">Wednesday, 11:59 PM</span>.
                 </p>
               </div>
 
