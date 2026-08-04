@@ -111,7 +111,7 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                   * Delegates who qualify as a delegation will pay ₹1299 first; the difference is refunded to your CA post conference.
                 </p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
-                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 5th August, 2026</span>.
+                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 6th August, 2026</span>.
                   Failure to pay will result in cancellation of your portfolio.
                 </p>
               </div>
