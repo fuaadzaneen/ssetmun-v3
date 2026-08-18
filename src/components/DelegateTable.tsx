@@ -64,7 +64,6 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
       return {
         Name: d.name,
         Email: d.email,
-        Phone: d.phone,
         WhatsApp: d.whatsapp,
         College: d.college,
         Course: d.course,
