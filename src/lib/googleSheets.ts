@@ -80,12 +80,34 @@ export async function fetchSheetData(
         ['third', '3rd']
       ][prefLevel - 1];
 
-      const startIdx = headers.findIndex((h) => {
+      let startIdx = headers.findIndex((h) => {
         const lower = h.toLowerCase();
         const hasCommittee = lower.includes(searchKey);
         const hasLevel = levels.some((lvl) => lower.includes(lvl));
         return hasCommittee && hasLevel;
       });
+
+      // Fallback for First Round Registrations sheet where headers lack committee names
+      if (startIdx === -1) {
+        const HARDCODED_MAP: Record<string, Record<number, number>> = {
+          'unga': { 1: 14, 2: 17, 3: 20 },
+          'uncsw': { 1: 23, 2: 26, 3: 29 },
+          'uncnd': { 1: 32, 2: 35, 3: 38 },
+          'who': { 1: 41, 2: 44, 3: 47 },
+          'aippm': { 1: 50, 2: 53, 3: 56 }
+        };
+        
+        // Find the base search key for WHO as it might be parsed differently
+        const normalizedKey = searchKey.includes('who') ? 'who' : searchKey;
+        
+        if (HARDCODED_MAP[normalizedKey] && HARDCODED_MAP[normalizedKey][prefLevel]) {
+          const fallbackIdx = HARDCODED_MAP[normalizedKey][prefLevel];
+          // Ensure we don't out-of-bounds and that the header is actually "first preference"
+          if (headers[fallbackIdx] && headers[fallbackIdx].includes('first pref')) {
+            startIdx = fallbackIdx;
+          }
+        }
+      }
 
       if (startIdx !== -1) {
         return [clean(row[startIdx]), clean(row[startIdx + 1]), clean(row[startIdx + 2])].filter(Boolean);
