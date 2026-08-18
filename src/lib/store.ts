@@ -7,12 +7,13 @@ export const INITIAL_ROUNDS: Round[] = [
     name: 'Priority Round',
     slug: 'priority',
     sheet_id: '1wYrXTH9O9u52-HipW4cb01cETUy0SIA05khoZCaAJjA',
-    sheet_name: 'Form responses 1',
+    sheet_name: 'Priority Round Registrations',
     fee_tiers: [
-      { name: 'Home Delegate', price: 999, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
-      { name: 'Institutional Delegate', price: 999, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
-      { name: 'Other Delegate', price: 1199, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
+      { name: 'Institutional/Delegation', price: 999, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
+      { name: 'School', price: 999, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
+      { name: 'Individual', price: 1199, payment_url: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331' },
     ],
+    deadline_date: '11:59 PM on 6th August, 2026',
     is_active: true,
   },
   {
@@ -20,11 +21,13 @@ export const INITIAL_ROUNDS: Round[] = [
     name: 'Round 1',
     slug: 'r1',
     sheet_id: '1wYrXTH9O9u52-HipW4cb01cETUy0SIA05khoZCaAJjA',
-    sheet_name: 'Form responses 1',
+    sheet_name: 'First Round Registrations',
     fee_tiers: [
-      { name: 'Silver', price: 1200, payment_url: 'https://forms.gle/r1-silver' },
-      { name: 'Gold', price: 1800, payment_url: 'https://forms.gle/r1-gold' },
+      { name: 'Institutional/Delegation', price: 1200, payment_url: 'https://forms.gle/r1-silver' },
+      { name: 'School', price: 1200, payment_url: 'https://forms.gle/r1-silver' },
+      { name: 'Individual', price: 1800, payment_url: 'https://forms.gle/r1-gold' },
     ],
+    deadline_date: '11:59 PM on 10th August, 2026',
     is_active: true,
   },
   {
@@ -34,9 +37,11 @@ export const INITIAL_ROUNDS: Round[] = [
     sheet_id: '1wYrXTH9O9u52-HipW4cb01cETUy0SIA05khoZCaAJjA',
     sheet_name: 'Form responses 2',
     fee_tiers: [
-      { name: 'Silver', price: 1400, payment_url: 'https://forms.gle/r2-silver' },
-      { name: 'Gold', price: 2000, payment_url: 'https://forms.gle/r2-gold' },
+      { name: 'Institutional/Delegation', price: 1400, payment_url: 'https://forms.gle/r2-silver' },
+      { name: 'School', price: 1400, payment_url: 'https://forms.gle/r2-silver' },
+      { name: 'Individual', price: 2000, payment_url: 'https://forms.gle/r2-gold' },
     ],
+    deadline_date: '11:59 PM on 15th August, 2026',
     is_active: true,
   },
 ];

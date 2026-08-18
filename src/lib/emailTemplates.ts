@@ -103,15 +103,15 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
               <div style="border-radius:16px;border:1px solid rgba(204,169,84,0.6);padding:20px;margin-top:18px;background:#0f2a2d !important;">
                 <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 10px 0;">Fee Structure</p>
                 <ul style="margin:6px 0 0 0;padding-left:18px;">
-                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual delegates: <span style="color:#ccb154 !important;font-weight:600;">₹1299</span></li>
-                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">School delegates: <span style="color:#ccb154 !important;font-weight:600;">₹1199</span></li>
-                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹1199</span></li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual delegates: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span></li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">School delegates: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SCHOOL]</span></li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_DELEGATION]</span></li>
                 </ul>
                 <p style="font-size:11px;line-height:1.5;color:#a9b3b8 !important;margin-top:10px;font-style:italic;">
-                  * Delegates who qualify as a delegation will pay ₹1299 first; the difference is refunded to your CA post conference.
+                  * Delegates who qualify as a delegation will pay ₹[FEE_INDIVIDUAL] first; the difference is refunded to your CA post conference.
                 </p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
-                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 6th August, 2026</span>.
+                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">[PAYMENT_DEADLINE]</span>.
                   Failure to pay will result in cancellation of your portfolio.
                 </p>
               </div>
@@ -195,7 +195,7 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 8px 0;">Fee &amp; Deadline</p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0;">
                   Complete payment for <span style="color:#ccb154 !important;font-weight:600;">[PASS_TIER]</span> by
-                  <span style="color:#ccb154 !important;font-weight:600;">11:59 PM on 5th August, 2026</span>.
+                  <span style="color:#ccb154 !important;font-weight:600;">[PAYMENT_DEADLINE]</span>.
                 </p>
               </div>
 
@@ -230,6 +230,10 @@ export function hydrateTemplate(
     foodPref?: string;
     travel?: string;
     passTier?: string;
+    paymentDeadline?: string;
+    feeDelegation?: number;
+    feeSchool?: number;
+    feeIndividual?: number;
   }
 ): string {
   let html = rawTemplate;
@@ -243,6 +247,10 @@ export function hydrateTemplate(
   html = html.replace(/\[ACCOMMODATION\]/g, params.accommodation || 'N/A');
   html = html.replace(/\[FOOD_PREF\]/g, params.foodPref || 'Standard');
   html = html.replace(/\[TRAVEL\]/g, params.travel || 'N/A');
-  html = html.replace(/\[PASS_TIER\]/g, params.passTier || 'Silver');
+  html = html.replace(/\[PASS_TIER\]/g, params.passTier || 'Individual');
+  html = html.replace(/\[PAYMENT_DEADLINE\]/g, params.paymentDeadline || 'TBD');
+  html = html.replace(/\[FEE_DELEGATION\]/g, (params.feeDelegation || 999).toString());
+  html = html.replace(/\[FEE_SCHOOL\]/g, (params.feeSchool || 999).toString());
+  html = html.replace(/\[FEE_INDIVIDUAL\]/g, (params.feeIndividual || 1199).toString());
   return html;
 }

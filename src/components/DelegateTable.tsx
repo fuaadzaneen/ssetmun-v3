@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, CheckCircle, Clock, AlertTriangle, Send, Edit, History, ShieldCheck, UserX } from 'lucide-react';
+import Papa from 'papaparse';
+import { Search, Filter, CheckCircle, Clock, AlertTriangle, Send, Edit, History, ShieldCheck, UserX, Download } from 'lucide-react';
 import { Delegate, CampusAmbassador } from '@/lib/types';
 import { normalizeCommitteeName } from '@/lib/committees';
 
@@ -55,6 +56,43 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
   const getResolvedCAName = (caId?: string | null) => {
     if (!caId) return null;
     return campusAmbassadors.find((ca) => ca.id === caId);
+  };
+
+  const handleExportCSV = () => {
+    const csvData = filteredDelegates.map(d => {
+      const resolvedCA = getResolvedCAName(d.resolved_ca_id);
+      return {
+        Name: d.name,
+        Email: d.email,
+        Phone: d.phone,
+        WhatsApp: d.whatsapp,
+        College: d.college,
+        Course: d.course,
+        DelegationType: d.delegation_type,
+        PaymentStatus: d.payment_status,
+        Accommodation: d.accommodation_required,
+        Transport: d.travel_assistance,
+        FoodPreference: d.food_preference,
+        RawCAInput: d.raw_ca_input || '',
+        ResolvedCA: resolvedCA ? `${resolvedCA.code} - ${resolvedCA.name}` : '',
+        CommitteePreferences: d.committee_preferences?.map(p => p.committee).join(' | ') || '',
+        AllottedCommittee: d.current_committee || '',
+        AllottedCountry: d.current_country || '',
+        PassTier: d.pass_tier || '',
+        Status: d.status,
+        EmailStatus: d.latest_email_status || ''
+      };
+    });
+    
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ssetmun_delegates_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -131,6 +169,15 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
             <option value="Yes">Trans: Yes</option>
             <option value="No">Trans: No</option>
           </select>
+          
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-1.5 bg-sset-gold text-sset-bg px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-sset-goldLight transition shadow-md"
+            title="Export filtered records to CSV"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
+          </button>
         </div>
       </div>
 

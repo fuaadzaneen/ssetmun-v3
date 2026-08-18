@@ -9,12 +9,13 @@ import { CAResolutionModal } from '@/components/CAResolutionModal';
 import { EmailModal } from '@/components/EmailModal';
 import { HistoryModal } from '@/components/HistoryModal';
 import { CALeaderboard } from '@/components/CALeaderboard';
+import { RoundSettingsModal } from '@/components/RoundSettingsModal';
 
 import { Delegate, CampusAmbassador, Round } from '@/lib/types';
 import { INITIAL_ROUNDS, INITIAL_CAS } from '@/lib/store';
 
 export default function DashboardPage() {
-  const [rounds] = useState<Round[]>(INITIAL_ROUNDS);
+  const [rounds, setRounds] = useState<Round[]>(INITIAL_ROUNDS);
   const [activeRound, setActiveRound] = useState<Round>(INITIAL_ROUNDS[0]);
 
   const [delegates, setDelegates] = useState<Delegate[]>([]);
@@ -27,6 +28,7 @@ export default function DashboardPage() {
   // Modals state
   const [allotmentDelegate, setAllotmentDelegate] = useState<Delegate | null>(null);
   const [isCAResolutionOpen, setIsCAResolutionOpen] = useState(false);
+  const [isRoundSettingsOpen, setIsRoundSettingsOpen] = useState(false);
 
   const [emailModalState, setEmailModalState] = useState<{
     isOpen: boolean;
@@ -318,6 +320,7 @@ export default function DashboardPage() {
             targets: delegates.filter((d) => d.status === 'Allotted'),
           })
         }
+        onOpenRoundSettings={() => setIsRoundSettingsOpen(true)}
         onExport={handleExportCSV}
         onExportAccom={handleExportAccommodation}
         onExportTrans={handleExportTransport}
@@ -396,8 +399,20 @@ export default function DashboardPage() {
         isOpen={emailModalState.isOpen}
         onClose={() => setEmailModalState({ isOpen: false, targets: [] })}
         targetDelegates={emailModalState.targets}
-        roundSlug={activeRound.slug}
+        activeRound={activeRound}
         onSendEmails={handleSendEmails}
+      />
+
+      <RoundSettingsModal
+        isOpen={isRoundSettingsOpen}
+        onClose={() => setIsRoundSettingsOpen(false)}
+        round={activeRound}
+        onSave={(updatedRound) => {
+          setRounds((prev) => prev.map((r) => (r.id === updatedRound.id ? updatedRound : r)));
+          if (activeRound.id === updatedRound.id) {
+            setActiveRound(updatedRound);
+          }
+        }}
       />
 
       <HistoryModal

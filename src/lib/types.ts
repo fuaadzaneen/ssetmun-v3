@@ -9,6 +9,8 @@ export interface Round {
     price: number;
     payment_url: string;
   }[];
+  deadline_date?: string;
+  custom_message?: string;
   is_active: boolean;
   created_at?: string;
   updated_at?: string;

@@ -44,8 +44,7 @@ export const CAResolutionModal: React.FC<CAResolutionModalProps> = ({
     setSelectedCAMap((prev) => ({ ...prev, [rawInput]: caId }));
   };
 
-  const handleResolveGroup = (rawInput: string) => {
-    const caId = selectedCAMap[rawInput];
+  const handleResolveGroup = (rawInput: string, caId: string) => {
     if (!caId) return;
     onResolveCA({ rawCaInput: rawInput, caId, isBulk: true });
   };
@@ -101,7 +100,7 @@ export const CAResolutionModal: React.FC<CAResolutionModalProps> = ({
                     </div>
 
                     <button
-                      onClick={() => handleResolveGroup(group.rawInput)}
+                      onClick={() => handleResolveGroup(group.rawInput, selectedCAId)}
                       disabled={!selectedCAId}
                       className="flex items-center gap-1 bg-sset-gold text-sset-bg font-bold px-3 py-1.5 rounded-lg hover:bg-sset-goldLight transition disabled:opacity-50 text-xs"
                     >

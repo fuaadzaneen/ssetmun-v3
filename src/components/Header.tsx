@@ -12,6 +12,7 @@ interface HeaderProps {
   isSyncing: boolean;
   onOpenCAResolution: () => void;
   onOpenBulkEmail: () => void;
+  onOpenRoundSettings: () => void;
   onExport: () => void;
   onExportAccom: () => void;
   onExportTrans: () => void;
@@ -29,6 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
   isSyncing,
   onOpenCAResolution,
   onOpenBulkEmail,
+  onOpenRoundSettings,
   onExport,
   onExportAccom,
   onExportTrans,
@@ -73,6 +75,13 @@ export const Header: React.FC<HeaderProps> = ({
               {r.name}
             </button>
           ))}
+          <button
+            onClick={onOpenRoundSettings}
+            className="p-1.5 ml-2 rounded-lg text-sset-muted hover:text-sset-gold hover:bg-sset-gold/10 transition-all border border-transparent hover:border-sset-gold/30"
+            title="Edit Round Settings"
+          >
+            <Layers className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Action Controls */}
