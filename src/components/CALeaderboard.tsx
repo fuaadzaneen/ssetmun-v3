@@ -1,27 +1,42 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { X, Award, Trophy, Users, ShieldCheck } from 'lucide-react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { X, Award, Trophy, Users, ShieldCheck, Loader2 } from 'lucide-react';
 import { Delegate, CampusAmbassador } from '@/lib/types';
 
 interface CALeaderboardProps {
   isOpen: boolean;
   onClose: () => void;
-  delegates: Delegate[];
   campusAmbassadors: CampusAmbassador[];
 }
 
 export const CALeaderboard: React.FC<CALeaderboardProps> = ({
   isOpen,
   onClose,
-  delegates,
   campusAmbassadors,
 }) => {
   if (!isOpen) return null;
 
+  const [allDelegates, setAllDelegates] = useState<Delegate[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLoading(true);
+      fetch('/api/delegates?roundSlug=all')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setAllDelegates(data.delegates);
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [isOpen]);
+
   const leaderboardData = useMemo(() => {
     return campusAmbassadors.map((ca) => {
-      const referred = delegates.filter((d) => d.resolved_ca_id === ca.id);
+      const referred = allDelegates.filter((d) => d.resolved_ca_id === ca.id);
       const allotted = referred.filter((d) => d.status === 'Allotted' || d.status === 'Confirmed');
       return {
         ca,
@@ -30,7 +45,7 @@ export const CALeaderboard: React.FC<CALeaderboardProps> = ({
         conversionRate: referred.length > 0 ? Math.round((allotted.length / referred.length) * 100) : 0,
       };
     }).sort((a, b) => b.totalReferred - a.totalReferred);
-  }, [delegates, campusAmbassadors]);
+  }, [allDelegates, campusAmbassadors]);
 
   return (
     <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -42,8 +57,11 @@ export const CALeaderboard: React.FC<CALeaderboardProps> = ({
         <div className="flex items-center gap-2">
           <Trophy className="w-6 h-6 text-sset-gold" />
           <div>
-            <h2 className="font-cinzel text-lg font-bold text-sset-gold">Campus Ambassador Leaderboard</h2>
-            <p className="text-xs text-sset-muted">Performance tracking & resolved referral metrics</p>
+            <div className="flex items-center gap-3">
+              <h2 className="font-cinzel text-lg font-bold text-sset-gold">Campus Ambassador Leaderboard</h2>
+              {loading && <Loader2 className="w-4 h-4 animate-spin text-sset-muted" />}
+            </div>
+            <p className="text-xs text-sset-muted">Global performance tracking across all rounds</p>
           </div>
         </div>
 

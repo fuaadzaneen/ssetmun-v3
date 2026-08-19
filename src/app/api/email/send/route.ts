@@ -20,7 +20,7 @@ const transporter = (smtpEmail && smtpPassword) ? nodemailer.createTransport({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { delegates, roundSlug = 'priority', templateType = 'priority', isBulk = false } = body;
+    const { delegates, roundSlug = 'priority', templateType = 'priority', isBulk = false, roundData } = body;
 
     if (!delegates || !Array.isArray(delegates) || delegates.length === 0) {
       return NextResponse.json(
@@ -28,6 +28,17 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // Extract fee info from passed roundData (set from the UI's active round)
+    const feeTiers: { name: string; price: number; payment_url: string }[] = roundData?.fee_tiers || [];
+    const sharedPaymentUrl = feeTiers[0]?.payment_url || 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform';
+    const paymentDeadline = roundData?.deadline_date || 'TBD';
+    const roundName = roundData?.name || (roundSlug === 'priority' ? 'Priority Round' : roundSlug === 'r1' ? 'Round 1' : 'Round 2');
+
+    const feeDelegation = feeTiers.find((t) => t.name === 'Institutional Delegate')?.price;
+    const feeSchool = feeTiers.find((t) => t.name === 'School Delegate')?.price;
+    const feeIndividual = feeTiers.find((t) => t.name === 'Individual Delegate')?.price;
+    const feeSSETians = feeTiers.find((t) => t.name === 'Home Delegate')?.price;
 
     const results = [];
 
@@ -38,13 +49,17 @@ export async function POST(req: Request) {
         delegateEmail: del.email,
         committee: del.current_committee || del.committee || 'UNGA-DISEC',
         country: del.current_country || del.country || 'India',
-        roundName: roundSlug === 'priority' ? 'Priority Round' : roundSlug === 'r1' ? 'Round 1' : 'Round 2',
+        roundName,
         passTier: del.pass_tier || 'Institutional Delegate',
         accommodation: del.accommodation_required || 'No',
         foodPref: del.food_preference || 'Non-Veg',
         travel: del.travel_assistance || 'No',
-        paymentUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331',
-        referenceUrl: 'https://forms.gle/reference',
+        paymentUrl: sharedPaymentUrl,
+        paymentDeadline,
+        feeDelegation,
+        feeSchool,
+        feeIndividual,
+        feeSSETians,
       });
 
       let status = 'sent';
@@ -110,4 +125,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
-

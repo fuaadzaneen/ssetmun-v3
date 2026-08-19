@@ -4,6 +4,7 @@ export interface Round {
   slug: 'priority' | 'r1' | 'r2';
   sheet_id: string;
   sheet_name: string;
+  payment_sheet_name?: string;
   fee_tiers: {
     name: string;
     price: number;
@@ -58,7 +59,7 @@ export interface Delegate {
   latest_email_status: 'none' | 'pending' | 'sent' | 'delivered' | 'failed';
   latest_email_sent_at?: string | null;
   latest_email_error?: string;
-  payment_status?: 'Pending' | 'Paid';
+  payment_status?: 'Paid' | 'Pending';
   synced_at?: string;
   created_at?: string;
   updated_at?: string;

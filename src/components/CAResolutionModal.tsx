@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { X, CheckCheck, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, CheckCheck, Sparkles, ShieldCheck, Search } from 'lucide-react';
 import { Delegate, CampusAmbassador } from '@/lib/types';
 import { findBestCAMatches } from '@/lib/caMatcher';
 
@@ -39,6 +39,18 @@ export const CAResolutionModal: React.FC<CAResolutionModalProps> = ({
   }, [unresolvedDelegates, campusAmbassadors]);
 
   const [selectedCAMap, setSelectedCAMap] = useState<Record<string, string>>({});
+  const [caSearchText, setCaSearchText] = useState('');
+
+  const filteredCAs = useMemo(() => {
+    if (!caSearchText.trim()) return campusAmbassadors;
+    const q = caSearchText.toLowerCase();
+    return campusAmbassadors.filter(
+      (ca) =>
+        ca.name.toLowerCase().includes(q) ||
+        ca.code.toLowerCase().includes(q) ||
+        ca.college.toLowerCase().includes(q)
+    );
+  }, [campusAmbassadors, caSearchText]);
 
   const handleSelectCA = (rawInput: string, caId: string) => {
     setSelectedCAMap((prev) => ({ ...prev, [rawInput]: caId }));
@@ -73,7 +85,20 @@ export const CAResolutionModal: React.FC<CAResolutionModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs">
+        <div className="p-4 border-b border-sset-border bg-sset-bg flex gap-4 flex-col sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sset-muted" />
+            <input
+              type="text"
+              placeholder="Search Campus Ambassadors by name, code, or college to filter dropdowns..."
+              value={caSearchText}
+              onChange={(e) => setCaSearchText(e.target.value)}
+              className="w-full bg-sset-card border border-sset-border rounded-lg pl-9 pr-4 py-2 text-xs text-sset-text focus:outline-none focus:border-sset-gold transition"
+            />
+          </div>
+        </div>
+
+        <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs bg-sset-bg/50">
           {groupedUnresolved.length === 0 ? (
             <div className="text-center py-12 text-sset-muted">
               <ShieldCheck className="w-10 h-10 text-emerald-400 mx-auto mb-2 opacity-80" />
@@ -140,7 +165,7 @@ export const CAResolutionModal: React.FC<CAResolutionModalProps> = ({
                       className="w-full bg-sset-card border border-sset-border rounded-lg p-2 text-sset-text focus:outline-none focus:border-sset-gold"
                     >
                       <option value="">Select canonical CA...</option>
-                      {campusAmbassadors.map((ca) => (
+                      {filteredCAs.map((ca) => (
                         <option key={ca.id} value={ca.id}>
                           {ca.code} – {ca.name} ({ca.college})
                         </option>

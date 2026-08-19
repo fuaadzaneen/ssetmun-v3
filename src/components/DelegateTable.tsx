@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Papa from 'papaparse';
-import { Search, Filter, CheckCircle, Clock, AlertTriangle, Send, Edit, History, ShieldCheck, UserX, Download } from 'lucide-react';
+import { Search, Filter, CheckCircle, Clock, AlertTriangle, Send, Edit, History, ShieldCheck, UserX, Download, Trash2 } from 'lucide-react';
 import { Delegate, CampusAmbassador } from '@/lib/types';
 import { normalizeCommitteeName } from '@/lib/committees';
 
@@ -14,6 +14,7 @@ interface DelegateTableProps {
   onViewHistory: (delegate: Delegate) => void;
   onResolveCA: (delegate: Delegate) => void;
   onTogglePayment: (delegateId: string) => void;
+  onDeleteDelegate: (delegateId: string) => void;
 }
 
 export const DelegateTable: React.FC<DelegateTableProps> = ({
@@ -24,6 +25,7 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
   onViewHistory,
   onResolveCA,
   onTogglePayment,
+  onDeleteDelegate,
 }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -31,6 +33,7 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
   const [caFilter, setCaFilter] = useState<string>('all');
   const [accomFilter, setAccomFilter] = useState<string>('all');
   const [transFilter, setTransFilter] = useState<string>('all');
+  const [paymentFilter, setPaymentFilter] = useState<string>('all');
 
   const filteredDelegates = useMemo(() => {
     return delegates.filter((d) => {
@@ -48,10 +51,11 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
         (caFilter === 'resolved' && Boolean(d.resolved_ca_id));
       const matchAccom = accomFilter === 'all' || d.accommodation_required === accomFilter;
       const matchTrans = transFilter === 'all' || d.travel_assistance === transFilter;
+      const matchPayment = paymentFilter === 'all' || d.payment_status === paymentFilter;
 
-      return matchSearch && matchStatus && matchCategory && matchCa && matchAccom && matchTrans;
+      return matchSearch && matchStatus && matchCategory && matchCa && matchAccom && matchTrans && matchPayment;
     });
-  }, [delegates, search, statusFilter, categoryFilter, caFilter, accomFilter, transFilter]);
+  }, [delegates, search, statusFilter, categoryFilter, caFilter, accomFilter, transFilter, paymentFilter]);
 
   const getResolvedCAName = (caId?: string | null) => {
     if (!caId) return null;
@@ -150,6 +154,16 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
           </select>
 
           <select
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+            className="bg-sset-bg border border-sset-border text-sset-text text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sset-gold"
+          >
+            <option value="all">Payment Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+          </select>
+
+          <select
             value={accomFilter}
             onChange={(e) => setAccomFilter(e.target.value)}
             className="bg-sset-bg border border-sset-border text-sset-text text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sset-gold"
@@ -203,7 +217,7 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
             <tbody className="divide-y divide-sset-border/50">
               {filteredDelegates.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10 text-sset-muted text-xs">
+                  <td colSpan={10} className="text-center py-10 text-sset-muted text-xs">
                     No delegate records match the selected criteria.
                   </td>
                 </tr>
@@ -362,6 +376,18 @@ export const DelegateTable: React.FC<DelegateTableProps> = ({
                             className="p-1.5 bg-sset-bg hover:bg-sset-muted hover:text-white text-sset-muted border border-sset-border rounded transition"
                           >
                             <History className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to permanently delete this delegate? This action cannot be undone.')) {
+                                onDeleteDelegate(d.id);
+                              }
+                            }}
+                            title="Delete Delegate"
+                            className="p-1.5 bg-sset-bg hover:bg-red-500 hover:text-white text-red-400 border border-red-500/40 rounded transition ml-2"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>

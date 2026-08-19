@@ -103,13 +103,11 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
               <div style="border-radius:16px;border:1px solid rgba(204,169,84,0.6);padding:20px;margin-top:18px;background:#0f2a2d !important;">
                 <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 10px 0;">Fee Structure</p>
                 <ul style="margin:6px 0 0 0;padding-left:18px;">
-                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual delegates: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span></li>
-                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">School delegates: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SCHOOL]</span></li>
-                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_DELEGATION]</span></li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_DELEGATION]</span>/- per delegate</li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">School Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SCHOOL]</span>/- per delegate</li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span>/- per delegate</li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">SSETians: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SSETIANS]</span>/- per delegate</li>
                 </ul>
-                <p style="font-size:11px;line-height:1.5;color:#a9b3b8 !important;margin-top:10px;font-style:italic;">
-                  * Delegates who qualify as a delegation will pay ₹[FEE_INDIVIDUAL] first; the difference is refunded to your CA post conference.
-                </p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
                   Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">[PAYMENT_DEADLINE]</span>.
                   Failure to pay will result in cancellation of your portfolio.
@@ -192,10 +190,18 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
               </div>
 
               <div style="border-radius:16px;border:1px solid rgba(204,169,84,0.6);padding:20px;margin-top:18px;background:#0f2a2d !important;">
-                <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 8px 0;">Fee &amp; Deadline</p>
-                <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0;">
-                  Complete payment for <span style="color:#ccb154 !important;font-weight:600;">[PASS_TIER]</span> by
-                  <span style="color:#ccb154 !important;font-weight:600;">[PAYMENT_DEADLINE]</span>.
+                <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 10px 0;">Fee Structure &amp; Deadline</p>
+                <ul style="margin:6px 0 0 0;padding-left:18px;">
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_DELEGATION]</span>/- per delegate</li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">School Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SCHOOL]</span>/- per delegate</li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span>/- per delegate</li>
+                  <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">SSETians: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SSETIANS]</span>/- per delegate</li>
+                </ul>
+                <p style="font-size:11px;line-height:1.5;color:#a9b3b8 !important;margin-top:10px;font-style:italic;">
+                  * Your current pass tier is <strong style="color:#ccb154 !important;">[PASS_TIER]</strong>.
+                </p>
+                <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
+                  Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">[PAYMENT_DEADLINE]</span>.
                 </p>
               </div>
 
@@ -234,6 +240,7 @@ export function hydrateTemplate(
     feeDelegation?: number;
     feeSchool?: number;
     feeIndividual?: number;
+    feeSSETians?: number;
   }
 ): string {
   let html = rawTemplate;
@@ -242,15 +249,16 @@ export function hydrateTemplate(
   html = html.replace(/\[COMMITTEE\]/g, params.committee || 'TBD');
   html = html.replace(/\[COUNTRY\]/g, params.country || 'TBD');
   html = html.replace(/\[ROUND_NAME\]/g, params.roundName || 'Priority Round');
-  html = html.replace(/\[PAYMENT_FORM_URL\]/g, params.paymentUrl || 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform?usp=sharing&ouid=112696060407417900331');
+  html = html.replace(/\[PAYMENT_FORM_URL\]/g, params.paymentUrl || 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform');
   html = html.replace(/\[REFERENCE_FORM_URL\]/g, params.referenceUrl || 'https://forms.gle/reference');
   html = html.replace(/\[ACCOMMODATION\]/g, params.accommodation || 'N/A');
   html = html.replace(/\[FOOD_PREF\]/g, params.foodPref || 'Standard');
   html = html.replace(/\[TRAVEL\]/g, params.travel || 'N/A');
   html = html.replace(/\[PASS_TIER\]/g, params.passTier || 'Individual');
   html = html.replace(/\[PAYMENT_DEADLINE\]/g, params.paymentDeadline || 'TBD');
-  html = html.replace(/\[FEE_DELEGATION\]/g, (params.feeDelegation || 999).toString());
-  html = html.replace(/\[FEE_SCHOOL\]/g, (params.feeSchool || 999).toString());
-  html = html.replace(/\[FEE_INDIVIDUAL\]/g, (params.feeIndividual || 1199).toString());
+  html = html.replace(/\[FEE_DELEGATION\]/g, (params.feeDelegation || 1399).toString());
+  html = html.replace(/\[FEE_SCHOOL\]/g, (params.feeSchool || 1399).toString());
+  html = html.replace(/\[FEE_INDIVIDUAL\]/g, (params.feeIndividual || 1499).toString());
+  html = html.replace(/\[FEE_SSETIANS\]/g, (params.feeSSETians || 1199).toString());
   return html;
 }

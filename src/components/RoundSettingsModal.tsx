@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Layers } from 'lucide-react';
+import { X, Save, Layers, Link } from 'lucide-react';
 import { Round } from '../lib/types';
 
 interface RoundSettingsModalProps {
@@ -11,9 +11,12 @@ interface RoundSettingsModalProps {
 
 export const RoundSettingsModal: React.FC<RoundSettingsModalProps> = ({ isOpen, onClose, round, onSave }) => {
   const [formData, setFormData] = useState<Round>(round);
+  // Single shared payment URL for all tiers
+  const [sharedPaymentUrl, setSharedPaymentUrl] = useState(round.fee_tiers[0]?.payment_url || '');
 
   useEffect(() => {
     setFormData(round);
+    setSharedPaymentUrl(round.fee_tiers[0]?.payment_url || '');
   }, [round, isOpen]);
 
   if (!isOpen) return null;
@@ -22,17 +25,22 @@ export const RoundSettingsModal: React.FC<RoundSettingsModalProps> = ({ isOpen, 
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFeeTierChange = (index: number, field: keyof Round['fee_tiers'][0], value: any) => {
+  const handlePriceChange = (index: number, value: number) => {
     setFormData((prev) => {
       const newFeeTiers = [...prev.fee_tiers];
-      newFeeTiers[index] = { ...newFeeTiers[index], [field]: value };
+      newFeeTiers[index] = { ...newFeeTiers[index], price: value };
       return { ...prev, fee_tiers: newFeeTiers };
     });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    // Apply the shared payment URL to all tiers before saving
+    const updatedFeeTiers = formData.fee_tiers.map((tier) => ({
+      ...tier,
+      payment_url: sharedPaymentUrl,
+    }));
+    onSave({ ...formData, fee_tiers: updatedFeeTiers });
     onClose();
   };
 
@@ -75,50 +83,58 @@ export const RoundSettingsModal: React.FC<RoundSettingsModalProps> = ({ isOpen, 
                   type="text"
                   value={formData.deadline_date || ''}
                   onChange={(e) => handleChange('deadline_date', e.target.value)}
-                  placeholder="e.g. 11:59 PM on 6th August, 2026"
+                  placeholder="e.g. 11:59 PM on 22nd August, 2026"
                   className="w-full bg-sset-card border border-sset-border rounded-lg p-2.5 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
                   required
                 />
               </div>
             </div>
 
-            {/* Fee Tiers */}
+            {/* Shared Payment URL */}
+            <div className="space-y-4 pt-4">
+              <h3 className="font-cinzel text-sm font-bold text-sset-text border-b border-sset-border pb-2 flex items-center gap-2">
+                <Link className="w-4 h-4" />
+                Payment Link (Shared for All Tiers)
+              </h3>
+              <div>
+                <label className="block text-[10px] font-semibold text-sset-muted uppercase tracking-wider mb-1.5">
+                  Payment Form URL
+                </label>
+                <input
+                  type="url"
+                  value={sharedPaymentUrl}
+                  onChange={(e) => setSharedPaymentUrl(e.target.value)}
+                  placeholder="https://forms.gle/..."
+                  className="w-full bg-sset-card border border-sset-border rounded-lg p-2.5 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
+                  required
+                />
+                <p className="text-[10px] text-sset-muted mt-1.5">
+                  This single link will be used in all delegate emails regardless of their tier.
+                </p>
+              </div>
+            </div>
+
+            {/* Fee Tiers - Price Only */}
             <div className="space-y-4 pt-4">
               <h3 className="font-cinzel text-sm font-bold text-sset-text border-b border-sset-border pb-2">
-                Fee Tiers & Payment Links
+                Fee Prices per Tier
               </h3>
               
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {formData.fee_tiers.map((tier, idx) => (
-                  <div key={idx} className="bg-sset-card p-4 rounded-xl border border-sset-border space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-sset-gold">{tier.name}</h4>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div className="md:col-span-1">
-                        <label className="block text-[10px] font-semibold text-sset-muted uppercase tracking-wider mb-1.5">
-                          Price (₹)
-                        </label>
-                        <input
-                          type="number"
-                          value={tier.price}
-                          onChange={(e) => handleFeeTierChange(idx, 'price', Number(e.target.value))}
-                          className="w-full bg-sset-bg border border-sset-border rounded-lg p-2 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
-                          required
-                        />
-                      </div>
-                      <div className="md:col-span-3">
-                        <label className="block text-[10px] font-semibold text-sset-muted uppercase tracking-wider mb-1.5">
-                          Payment URL
-                        </label>
-                        <input
-                          type="url"
-                          value={tier.payment_url}
-                          onChange={(e) => handleFeeTierChange(idx, 'payment_url', e.target.value)}
-                          className="w-full bg-sset-bg border border-sset-border rounded-lg p-2 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
-                          required
-                        />
-                      </div>
+                  <div key={idx} className="bg-sset-card p-4 rounded-xl border border-sset-border space-y-2">
+                    <h4 className="text-xs font-bold text-sset-gold">{tier.name}</h4>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-sset-muted uppercase tracking-wider mb-1.5">
+                        Price (₹)
+                      </label>
+                      <input
+                        type="number"
+                        value={tier.price}
+                        onChange={(e) => handlePriceChange(idx, Number(e.target.value))}
+                        className="w-full bg-sset-bg border border-sset-border rounded-lg p-2 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
+                        required
+                      />
                     </div>
                   </div>
                 ))}

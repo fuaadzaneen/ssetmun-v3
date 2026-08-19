@@ -54,10 +54,12 @@ export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSe
       foodPref: currentPreviewDelegate.food_preference || 'Non-Veg',
       travel: currentPreviewDelegate.travel_assistance || 'No',
       paymentDeadline: activeRound.deadline_date,
-      paymentUrl: activeRound.fee_tiers.find((t) => t.name === currentPreviewDelegate.pass_tier)?.payment_url || activeRound.fee_tiers[0]?.payment_url,
-      feeDelegation: activeRound.fee_tiers.find((t) => t.name === 'Institutional/Delegation')?.price,
-      feeSchool: activeRound.fee_tiers.find((t) => t.name === 'School')?.price,
-      feeIndividual: activeRound.fee_tiers.find((t) => t.name === 'Individual')?.price,
+      // Use the first fee tier's URL as the shared payment link (same for all tiers in R1)
+      paymentUrl: activeRound.fee_tiers[0]?.payment_url,
+      feeDelegation: activeRound.fee_tiers.find((t) => t.name === 'Institutional Delegate')?.price,
+      feeSchool: activeRound.fee_tiers.find((t) => t.name === 'School Delegate')?.price,
+      feeIndividual: activeRound.fee_tiers.find((t) => t.name === 'Individual Delegate')?.price,
+      feeSSETians: activeRound.fee_tiers.find((t) => t.name === 'Home Delegate')?.price,
     });
   }, [currentPreviewDelegate, templateType, activeRound]);
 

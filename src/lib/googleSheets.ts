@@ -20,6 +20,38 @@ export interface ParsedSheetRow {
   queries_suggestions: string;
 }
 
+export async function fetchPaymentData(sheetId: string, sheetName: string): Promise<{ emails: Set<string>; phones: Set<string> }> {
+  const encodedSheetName = encodeURIComponent(sheetName);
+  const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedSheetName}`;
+
+  const res = await fetch(csvUrl, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch payment sheet (Status ${res.status})`);
+  }
+
+  const csvText = await res.text();
+  const parsed = Papa.parse<string[]>(csvText, { skipEmptyLines: true });
+
+  if (!parsed.data || parsed.data.length <= 1) {
+    return { emails: new Set(), phones: new Set() };
+  }
+
+  const headers = parsed.data[0].map(h => h.trim().toLowerCase());
+  const emailIdx = headers.findIndex(h => h.includes('email'));
+  const phoneIdx = headers.findIndex(h => h.includes('phone') || h.includes('whatsapp') || h.includes('contact'));
+
+  const rows = parsed.data.slice(1);
+  const emails = new Set<string>();
+  const phones = new Set<string>();
+
+  for (const row of rows) {
+    if (emailIdx >= 0 && row[emailIdx]) emails.add(row[emailIdx].trim().toLowerCase());
+    if (phoneIdx >= 0 && row[phoneIdx]) phones.add(row[phoneIdx].trim());
+  }
+
+  return { emails, phones };
+}
+
 export async function fetchSheetData(
   sheetId: string,
   sheetName: string
@@ -93,8 +125,8 @@ export async function fetchSheetData(
           'unga': { 1: 14, 2: 17, 3: 20 },
           'uncsw': { 1: 23, 2: 26, 3: 29 },
           'uncnd': { 1: 32, 2: 35, 3: 38 },
-          'who': { 1: 41, 2: 44, 3: 47 },
-          'aippm': { 1: 50, 2: 53, 3: 56 }
+          'aippm': { 1: 41, 2: 44, 3: 47 },
+          'who': { 1: 50, 2: 53, 3: 56 }
         };
         
         // Find the base search key for WHO as it might be parsed differently

@@ -190,6 +190,7 @@ export default function DashboardPage() {
           delegates: data.delegates,
           roundSlug: activeRound.slug,
           templateType: data.templateType,
+          roundData: activeRound, // Pass full round data so API can use correct fees & payment URL
         }),
       });
       const responseData = await res.json();
@@ -223,6 +224,22 @@ export default function DashboardPage() {
           : d
       )
     );
+  };
+
+  const handleDeleteDelegate = async (delegateId: string) => {
+    try {
+      const res = await fetch(`/api/delegates?id=${delegateId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDelegates((prev) => prev.filter((d) => d.id !== delegateId));
+      } else {
+        alert('Failed to delete delegate: ' + data.error);
+      }
+    } catch (err: any) {
+      alert('An error occurred while deleting: ' + err.message);
+    }
   };
 
   // Handle CSV Export
@@ -370,13 +387,13 @@ export default function DashboardPage() {
         <DelegateTable
           delegates={delegates}
           campusAmbassadors={campusAmbassadors}
-          onOpenAllotment={(d) => setAllotmentDelegate(d)}
+          onSendBulkEmail={() => setEmailModalState({ isOpen: true, targets: delegates.filter(d => d.status === 'Allotted') })}
           onSendSingleEmail={(d) => setEmailModalState({ isOpen: true, targets: [d] })}
-          onViewHistory={(d) => setHistoryDelegate(d)}
-          onResolveCA={(d) => {
-            setIsCAResolutionOpen(true);
-          }}
+          onOpenAllotment={setAllotmentDelegate}
+          onViewHistory={setHistoryDelegate}
+          onResolveCA={() => setIsCAResolutionOpen(true)}
           onTogglePayment={handleTogglePayment}
+          onDeleteDelegate={handleDeleteDelegate}
         />
       </main>
 
@@ -423,7 +440,6 @@ export default function DashboardPage() {
       <CALeaderboard
         isOpen={isLeaderboardOpen}
         onClose={() => setIsLeaderboardOpen(false)}
-        delegates={delegates}
         campusAmbassadors={campusAmbassadors}
       />
     </div>

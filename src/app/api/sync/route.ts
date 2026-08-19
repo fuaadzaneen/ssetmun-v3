@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchSheetData, ParsedSheetRow } from '@/lib/googleSheets';
+import { fetchSheetData, fetchPaymentData, ParsedSheetRow } from '@/lib/googleSheets';
 import { isSupabaseConfigured, supabaseAdmin } from '@/lib/supabase';
 import { INITIAL_DELEGATES, INITIAL_ROUNDS } from '@/lib/store';
 import { Delegate } from '@/lib/types';
@@ -13,8 +13,16 @@ export async function POST(req: Request) {
 
     // Fetch live rows from Google Sheet
     let parsedRows: ParsedSheetRow[] = [];
+    let paidEmails = new Set<string>();
+    let paidPhones = new Set<string>();
+
     try {
       parsedRows = await fetchSheetData(round.sheet_id, round.sheet_name);
+      if (round.payment_sheet_name) {
+        const paymentData = await fetchPaymentData(round.sheet_id, round.payment_sheet_name);
+        paidEmails = paymentData.emails;
+        paidPhones = paymentData.phones;
+      }
     } catch (err: any) {
       console.warn('Live Google Sheet fetch notice:', err.message);
       parsedRows = [];
@@ -43,6 +51,11 @@ export async function POST(req: Request) {
           }
 
           // Idempotent update: refresh form fields, preserve allotment & resolved_ca_id
+          const delegateEmail = row.email.trim().toLowerCase();
+          const delegatePhone = String(row.whatsapp || '').trim();
+          const hasPaid = paidEmails.has(delegateEmail) || paidPhones.has(delegatePhone);
+          const paymentStatus = hasPaid ? 'Paid' : 'Pending';
+
           const { error } = await supabaseAdmin
             .from('delegates')
             .update({
@@ -65,6 +78,7 @@ export async function POST(req: Request) {
               current_country: existing.current_country,
               status: existing.status,
               pass_tier: existing.pass_tier,
+              payment_status: paymentStatus,
               manual_allotment: existing.manual_allotment ?? false,
               synced_at: new Date().toISOString(),
               dummy_test: 'synced',
@@ -78,6 +92,11 @@ export async function POST(req: Request) {
           }
         } else {
           // Insert new delegate
+          const delegateEmail = row.email.trim().toLowerCase();
+          const delegatePhone = String(row.whatsapp || '').trim();
+          const hasPaid = paidEmails.has(delegateEmail) || paidPhones.has(delegatePhone);
+          const paymentStatus = hasPaid ? 'Paid' : 'Pending';
+
           const { error } = await supabaseAdmin.from('delegates').insert({
             round_id: round.id,
             name: row.name,
@@ -96,6 +115,7 @@ export async function POST(req: Request) {
             travel_assistance: row.travel_assistance,
             queries_suggestions: row.queries_suggestions,
             status: 'Registered',
+            payment_status: paymentStatus,
             pass_tier: row.delegation_type === 'Institutional' ? 'Institutional Delegate' : 'Home Delegate',
             latest_email_status: 'none',
           });
