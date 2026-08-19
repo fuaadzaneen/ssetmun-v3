@@ -108,6 +108,9 @@ export const PRIORITY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span>/- per delegate</li>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">SSETians: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SSETIANS]</span>/- per delegate</li>
                 </ul>
+                <p style="font-size:11px;line-height:1.6;color:#a9b3b8 !important;margin-top:10px;font-style:italic;border-left:2px solid rgba(204,169,84,0.5);padding-left:10px;">
+                  📌 Note: Every institutional delegate who is part of a delegation is required to pay <strong style="color:#ccb154 !important;">₹[FEE_INDIVIDUAL]/-</strong> at the time of registration. The difference of <strong style="color:#ccb154 !important;">₹100/-</strong> will be refunded to your Campus Ambassador upon qualifying as a successful delegation.
+                </p>
                 <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin-top:14px;">
                   Please complete payment by <span style="color:#ccb154 !important;font-weight:600;">[PAYMENT_DEADLINE]</span>.
                   Failure to pay will result in cancellation of your portfolio.
@@ -197,6 +200,9 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span>/- per delegate</li>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">SSETians: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SSETIANS]</span>/- per delegate</li>
                 </ul>
+                <p style="font-size:11px;line-height:1.6;color:#a9b3b8 !important;margin-top:10px;font-style:italic;border-left:2px solid rgba(204,169,84,0.5);padding-left:10px;">
+                  📌 Note: Every institutional delegate who is part of a delegation is required to pay <strong style="color:#ccb154 !important;">₹[FEE_INDIVIDUAL]/-</strong> at the time of registration. The difference of <strong style="color:#ccb154 !important;">₹100/-</strong> will be refunded to your Campus Ambassador upon qualifying as a successful delegation.
+                </p>
                 <p style="font-size:11px;line-height:1.5;color:#a9b3b8 !important;margin-top:10px;font-style:italic;">
                   * Your current pass tier is <strong style="color:#ccb154 !important;">[PASS_TIER]</strong>.
                 </p>
