@@ -387,7 +387,6 @@ export default function DashboardPage() {
         <DelegateTable
           delegates={delegates}
           campusAmbassadors={campusAmbassadors}
-          onSendBulkEmail={() => setEmailModalState({ isOpen: true, targets: delegates.filter(d => d.status === 'Allotted') })}
           onSendSingleEmail={(d) => setEmailModalState({ isOpen: true, targets: [d] })}
           onOpenAllotment={setAllotmentDelegate}
           onViewHistory={setHistoryDelegate}

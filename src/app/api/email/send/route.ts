@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     // Extract fee info from passed roundData (set from the UI's active round)
     const feeTiers: { name: string; price: number; payment_url: string }[] = roundData?.fee_tiers || [];
-    const sharedPaymentUrl = feeTiers[0]?.payment_url || 'https://docs.google.com/forms/d/e/1FAIpQLScaphuXKjjxA6ClY38gMG-SLeZpT-6rQWdnMb8BgsrvG4I-Fg/viewform';
+    const sharedPaymentUrl = feeTiers[0]?.payment_url || 'https://forms.gle/zNNtdiFjRgxqx64D6';
     const paymentDeadline = roundData?.deadline_date || 'TBD';
     const roundName = roundData?.name || (roundSlug === 'priority' ? 'Priority Round' : roundSlug === 'r1' ? 'Round 1' : 'Round 2');
 
