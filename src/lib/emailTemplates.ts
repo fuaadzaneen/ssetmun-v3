@@ -194,15 +194,19 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
 
               <div style="border-radius:16px;border:1px solid rgba(204,169,84,0.6);padding:20px;margin-top:18px;background:#0f2a2d !important;">
                 <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 10px 0;">Fee Structure &amp; Deadline</p>
+                <!-- FEE_LIST_START -->
                 <ul style="margin:6px 0 0 0;padding-left:18px;">
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_DELEGATION]</span>/- per delegate</li>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">School Delegation: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SCHOOL]</span>/- per delegate</li>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">Individual: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_INDIVIDUAL]</span>/- per delegate</li>
                   <li style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;">SSETians: <span style="color:#ccb154 !important;font-weight:600;">₹[FEE_SSETIANS]</span>/- per delegate</li>
                 </ul>
+                <!-- FEE_LIST_END -->
+                <!-- INST_NOTE_START -->
                 <p style="font-size:11px;line-height:1.6;color:#a9b3b8 !important;margin-top:10px;font-style:italic;border-left:2px solid rgba(204,169,84,0.5);padding-left:10px;">
                   📌 Note: Every institutional delegate who is part of a delegation is required to pay <strong style="color:#ccb154 !important;">₹[FEE_INDIVIDUAL]/-</strong> at the time of registration. The difference of <strong style="color:#ccb154 !important;">₹100/-</strong> will be refunded to your Campus Ambassador upon qualifying as a successful delegation.
                 </p>
+                <!-- INST_NOTE_END -->
                 <p style="font-size:11px;line-height:1.5;color:#a9b3b8 !important;margin-top:10px;font-style:italic;">
                   * Your current pass tier is <strong style="color:#ccb154 !important;">[PASS_TIER]</strong>.
                 </p>
@@ -247,6 +251,8 @@ export function hydrateTemplate(
     feeSchool?: number;
     feeIndividual?: number;
     feeSSETians?: number;
+    /** When set, replaces the multi-tier fee list with a single school fee line */
+    feeSchoolFixed?: number;
   }
 ): string {
   let html = rawTemplate;
@@ -266,5 +272,22 @@ export function hydrateTemplate(
   html = html.replace(/\[FEE_SCHOOL\]/g, (params.feeSchool || 1399).toString());
   html = html.replace(/\[FEE_INDIVIDUAL\]/g, (params.feeIndividual || 1499).toString());
   html = html.replace(/\[FEE_SSETIANS\]/g, (params.feeSSETians || 1199).toString());
+
+  if (params.feeSchoolFixed) {
+    // For school delegates: replace tier list with a single clean fee line
+    html = html.replace(
+      /<!--\s*FEE_LIST_START\s*-->[\s\S]*?<!--\s*FEE_LIST_END\s*-->/,
+      `<p style="font-size:15px;font-weight:600;color:#f5f4ef !important;margin:8px 0;">
+         School Delegation Fee: <span style="color:#ccb154 !important;">₹${params.feeSchoolFixed}/-</span> per delegate
+       </p>`
+    );
+    // Remove the institutional note — not applicable for school delegations
+    html = html.replace(/<!--\s*INST_NOTE_START\s*-->[\s\S]*?<!--\s*INST_NOTE_END\s*-->/, '');
+  } else {
+    // Regular delegates: just strip the comment markers, keep the content
+    html = html.replace(/<!--\s*FEE_LIST_START\s*-->/g, '').replace(/<!--\s*FEE_LIST_END\s*-->/g, '');
+    html = html.replace(/<!--\s*INST_NOTE_START\s*-->/g, '').replace(/<!--\s*INST_NOTE_END\s*-->/g, '');
+  }
+
   return html;
 }

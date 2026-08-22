@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Papa from 'papaparse';
 import { Header } from '@/components/Header';
 import { DelegateTable } from '@/components/DelegateTable';
@@ -10,17 +10,25 @@ import { EmailModal } from '@/components/EmailModal';
 import { HistoryModal } from '@/components/HistoryModal';
 import { CALeaderboard } from '@/components/CALeaderboard';
 import { RoundSettingsModal } from '@/components/RoundSettingsModal';
+import { SchoolsSection } from '@/components/SchoolsSection';
 
-import { Delegate, CampusAmbassador, Round } from '@/lib/types';
+import { Delegate, CampusAmbassador, Round, School } from '@/lib/types';
 import { INITIAL_ROUNDS, INITIAL_CAS } from '@/lib/store';
 
 export default function DashboardPage() {
   const [rounds, setRounds] = useState<Round[]>(INITIAL_ROUNDS);
   const [activeRound, setActiveRound] = useState<Round>(INITIAL_ROUNDS[0]);
 
+  // Active view: 'delegates' or 'schools'
+  const [activeView, setActiveView] = useState<'delegates' | 'schools'>('delegates');
+
   const [delegates, setDelegates] = useState<Delegate[]>([]);
   const [isLoadingDelegates, setIsLoadingDelegates] = useState(true);
   const [campusAmbassadors] = useState<CampusAmbassador[]>(INITIAL_CAS);
+
+  // Schools state
+  const [schools, setSchools] = useState<School[]>([]);
+  const [isLoadingSchools, setIsLoadingSchools] = useState(false);
 
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncNotice, setSyncNotice] = useState<string | null>(null);
@@ -54,19 +62,35 @@ export default function DashboardPage() {
     }
   };
 
+  // Load schools from Supabase
+  const loadSchools = useCallback(async (roundSlug: string) => {
+    setIsLoadingSchools(true);
+    try {
+      const res = await fetch(`/api/schools?roundSlug=${roundSlug}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success) setSchools(data.schools);
+    } catch (err) {
+      console.error('Failed to load schools:', err);
+    } finally {
+      setIsLoadingSchools(false);
+    }
+  }, []);
+
   // Load on mount
   useEffect(() => {
     loadDelegates(activeRound.slug);
+    loadSchools(activeRound.slug);
   }, []);
 
   // Reload when round changes
   const handleSelectRound = (round: Round) => {
     setActiveRound(round);
     loadDelegates(round.slug);
+    loadSchools(round.slug);
   };
 
-  // Unresolved CA Count
-  const unresolvedCACount = delegates.filter((d) => !d.resolved_ca_id).length;
+  // Unresolved CA Count — school delegates don't use CA codes, exclude them
+  const unresolvedCACount = delegates.filter((d) => !d.resolved_ca_id && !d.school_id).length;
   const allottedCount = delegates.filter((d) => d.status === 'Allotted' || d.status === 'Confirmed').length;
 
   // Handle Sheet Sync
@@ -383,7 +407,39 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Primary Data Grid */}
+        {/* View Tab Switcher */}
+        <div className="flex items-center gap-1 bg-sset-bg border border-sset-border rounded-xl p-1 w-fit">
+          <button
+            onClick={() => setActiveView('delegates')}
+            className={`px-5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              activeView === 'delegates'
+                ? 'bg-sset-gold text-sset-bg font-bold shadow-md'
+                : 'text-sset-muted hover:text-sset-text'
+            }`}
+          >
+            Delegates
+          </button>
+          <button
+            onClick={() => setActiveView('schools')}
+            className={`flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              activeView === 'schools'
+                ? 'bg-sset-gold text-sset-bg font-bold shadow-md'
+                : 'text-sset-muted hover:text-sset-text'
+            }`}
+          >
+            Schools
+            {schools.length > 0 && (
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                activeView === 'schools' ? 'bg-sset-bg/30 text-sset-bg' : 'bg-sset-gold/20 text-sset-gold'
+              }`}>
+                {schools.length}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Primary Data Grid — Delegates */}
+        {activeView === 'delegates' && (
         <DelegateTable
           delegates={delegates}
           campusAmbassadors={campusAmbassadors}
@@ -394,6 +450,21 @@ export default function DashboardPage() {
           onTogglePayment={handleTogglePayment}
           onDeleteDelegate={handleDeleteDelegate}
         />
+        )}
+
+        {/* Schools Section */}
+        {activeView === 'schools' && (
+          <SchoolsSection
+            activeRound={activeRound}
+            schools={schools}
+            delegates={delegates}
+            isLoading={isLoadingSchools}
+            onSchoolsChanged={() => loadSchools(activeRound.slug)}
+            onDelegateSynced={() => loadDelegates(activeRound.slug)}
+            onOpenAllotment={setAllotmentDelegate}
+            onSendEmail={(targets) => setEmailModalState({ isOpen: true, targets })}
+          />
+        )}
       </main>
 
       {/* Modals */}

@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         committee: del.current_committee || del.committee || 'UNGA-DISEC',
         country: del.current_country || del.country || 'India',
         roundName,
-        passTier: del.pass_tier || 'Institutional Delegate',
+        passTier: del.pass_tier || (del.school_id ? 'School Delegate' : 'Institutional Delegate'),
         accommodation: del.accommodation_required || 'No',
         foodPref: del.food_preference || 'Non-Veg',
         travel: del.travel_assistance || 'No',
@@ -60,6 +60,7 @@ export async function POST(req: Request) {
         feeSchool,
         feeIndividual,
         feeSSETians,
+        feeSchoolFixed: templateType === 'school' || del.school_id ? (del.school_price ?? undefined) : undefined,
       });
 
       let status = 'sent';

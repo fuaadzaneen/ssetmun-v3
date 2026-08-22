@@ -16,7 +16,12 @@ interface EmailModalProps {
 export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSendEmails }: EmailModalProps) => {
   if (!isOpen) return null;
 
-  const [templateType, setTemplateType] = useState(activeRound.slug === 'priority' ? 'priority' : 'multi');
+  // Detect if ALL targets are school delegates — use school template by default
+  const isSchoolBatch = targetDelegates.length > 0 && targetDelegates.every((d) => d.school_id);
+
+  const [templateType, setTemplateType] = useState(
+    isSchoolBatch ? 'school' : (activeRound.slug === 'priority' ? 'priority' : 'multi')
+  );
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
   const [isSending, setIsSending] = useState(false);
   const [forceResendConfirmed, setForceResendConfirmed] = useState(false);
@@ -42,24 +47,26 @@ export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSe
 
   const previewHtml = useMemo(() => {
     if (!currentPreviewDelegate) return '';
-    const raw = templateType === 'priority' ? PRIORITY_EMAIL_TEMPLATE : MULTI_ROUND_EMAIL_TEMPLATE;
+    // 'school' reuses the multi-round template with feeSchoolFixed override
+    const raw = (templateType === 'priority') ? PRIORITY_EMAIL_TEMPLATE : MULTI_ROUND_EMAIL_TEMPLATE;
     return hydrateTemplate(raw, {
       delegateName: currentPreviewDelegate.name,
       delegateEmail: currentPreviewDelegate.email,
       committee: currentPreviewDelegate.current_committee || 'UNGA-DISEC',
       country: currentPreviewDelegate.current_country || 'India',
       roundName: activeRound.name,
-      passTier: currentPreviewDelegate.pass_tier || 'Institutional Delegate',
+      passTier: currentPreviewDelegate.pass_tier || 'School Delegate',
       accommodation: currentPreviewDelegate.accommodation_required || 'No',
       foodPref: currentPreviewDelegate.food_preference || 'Non-Veg',
       travel: currentPreviewDelegate.travel_assistance || 'No',
       paymentDeadline: activeRound.deadline_date,
-      // Use the first fee tier's URL as the shared payment link (same for all tiers in R1)
       paymentUrl: activeRound.fee_tiers[0]?.payment_url,
       feeDelegation: activeRound.fee_tiers.find((t) => t.name === 'Institutional Delegate')?.price,
       feeSchool: activeRound.fee_tiers.find((t) => t.name === 'School Delegate')?.price,
       feeIndividual: activeRound.fee_tiers.find((t) => t.name === 'Individual Delegate')?.price,
       feeSSETians: activeRound.fee_tiers.find((t) => t.name === 'Home Delegate')?.price,
+      // When school template: use this delegate's fixed school price instead of the tier list
+      feeSchoolFixed: templateType === 'school' ? (currentPreviewDelegate.school_price ?? undefined) : undefined,
     });
   }, [currentPreviewDelegate, templateType, activeRound]);
 
@@ -113,8 +120,14 @@ export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSe
                 className="w-full bg-sset-card border border-sset-border rounded-lg p-2 text-sset-text focus:outline-none focus:border-sset-gold font-medium"
               >
                 <option value="priority">Priority Round Portfolio Allotment</option>
-                <option value="multi">Round 1 & 2 Portfolio + Logistics</option>
+                <option value="multi">Round 1 &amp; 2 Portfolio + Logistics</option>
+                <option value="school">School Delegation Allotment</option>
               </select>
+              {templateType === 'school' && (
+                <p className="mt-1 text-[10px] text-sset-muted">
+                  Fee shown: each delegate&apos;s individual <strong className="text-sset-gold">school_price</strong> — no tier list.
+                </p>
+              )}
             </div>
 
             {/* Duplicate Send Guard Warning */}

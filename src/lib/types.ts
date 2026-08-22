@@ -60,9 +60,29 @@ export interface Delegate {
   latest_email_sent_at?: string | null;
   latest_email_error?: string;
   payment_status?: 'Paid' | 'Pending';
+  // School delegation fields
+  school_id?: string | null;
+  emergency_contact?: string;
+  school_price?: number;
   synced_at?: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface School {
+  id: string;
+  name: string;
+  coordinator_name?: string;
+  coordinator_email?: string;
+  coordinator_phone?: string;
+  price_per_delegate: number;
+  payment_link: string;
+  sheet_id?: string;       // Google Sheet ID for the school's filled template
+  sheet_name?: string;     // Sheet tab name (defaults to first visible sheet)
+  round_id?: string;
+  notes?: string;
+  created_at?: string;
+  delegate_count?: number; // computed on fetch
 }
 
 export interface Allotment {
