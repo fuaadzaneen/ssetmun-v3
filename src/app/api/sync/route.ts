@@ -9,7 +9,22 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const roundSlug = body.roundSlug || 'priority';
 
-    const round = INITIAL_ROUNDS.find((r) => r.slug === roundSlug) || INITIAL_ROUNDS[0];
+    let round = INITIAL_ROUNDS.find((r) => r.slug === roundSlug) || INITIAL_ROUNDS[0];
+
+    if (isSupabaseConfigured && supabaseAdmin) {
+      const { data: dbRound } = await supabaseAdmin
+        .from('rounds')
+        .select('*')
+        .eq('slug', roundSlug)
+        .maybeSingle();
+
+      if (dbRound) {
+        round = {
+          ...round,
+          sheet_name: dbRound.sheet_name || round.sheet_name,
+        };
+      }
+    }
 
     // Fetch live rows from Google Sheet
     let parsedRows: ParsedSheetRow[] = [];

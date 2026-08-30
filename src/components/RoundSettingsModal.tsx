@@ -75,18 +75,33 @@ export const RoundSettingsModal: React.FC<RoundSettingsModalProps> = ({ isOpen, 
               <h3 className="font-cinzel text-sm font-bold text-sset-text border-b border-sset-border pb-2">
                 General
               </h3>
-              <div>
-                <label className="block text-xs font-semibold text-sset-muted uppercase tracking-wider mb-2">
-                  Payment Deadline (Displayed in Email)
-                </label>
-                <input
-                  type="text"
-                  value={formData.deadline_date || ''}
-                  onChange={(e) => handleChange('deadline_date', e.target.value)}
-                  placeholder="e.g. 11:59 PM on 22nd August, 2026"
-                  className="w-full bg-sset-card border border-sset-border rounded-lg p-2.5 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-sset-muted uppercase tracking-wider mb-2">
+                    Payment Deadline (Displayed in Email)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.deadline_date || ''}
+                    onChange={(e) => handleChange('deadline_date', e.target.value)}
+                    placeholder="e.g. 11:59 PM on 31st August, 2026"
+                    className="w-full bg-sset-card border border-sset-border rounded-lg p-2.5 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-sset-muted uppercase tracking-wider mb-2">
+                    Google Sheet Tab Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.sheet_name || ''}
+                    onChange={(e) => handleChange('sheet_name', e.target.value)}
+                    placeholder="e.g. Second Round Registrations"
+                    className="w-full bg-sset-card border border-sset-border rounded-lg p-2.5 text-sm text-sset-text focus:outline-none focus:border-sset-gold transition"
+                    required
+                  />
+                </div>
               </div>
             </div>
 

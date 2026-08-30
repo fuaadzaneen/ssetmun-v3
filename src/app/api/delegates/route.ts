@@ -14,7 +14,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: false, delegates: [] });
     }
 
-    let query = supabaseAdmin.from('delegates').select('*');
+    let query = supabaseAdmin.from('delegates').select('*').like('email', '%@%');
     
     if (roundSlug !== 'all') {
       const round = INITIAL_ROUNDS.find((r) => r.slug === roundSlug) || INITIAL_ROUNDS[0];

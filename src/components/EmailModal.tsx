@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { X, Send, AlertTriangle, CheckCircle, Eye } from 'lucide-react';
 import { Delegate, Round } from '../lib/types';
-import { PRIORITY_EMAIL_TEMPLATE, MULTI_ROUND_EMAIL_TEMPLATE, hydrateTemplate } from '../lib/emailTemplates';
+import { PRIORITY_EMAIL_TEMPLATE, MULTI_ROUND_EMAIL_TEMPLATE, ROUND_2_EMAIL_TEMPLATE, hydrateTemplate } from '../lib/emailTemplates';
 
 interface EmailModalProps {
   isOpen: boolean;
@@ -20,7 +20,13 @@ export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSe
   const isSchoolBatch = targetDelegates.length > 0 && targetDelegates.every((d) => d.school_id);
 
   const [templateType, setTemplateType] = useState(
-    isSchoolBatch ? 'school' : (activeRound.slug === 'priority' ? 'priority' : 'multi')
+    isSchoolBatch 
+      ? 'school' 
+      : activeRound.slug === 'priority' 
+        ? 'priority' 
+        : activeRound.slug === 'r2' 
+          ? 'r2' 
+          : 'multi'
   );
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
   const [isSending, setIsSending] = useState(false);
@@ -47,8 +53,11 @@ export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSe
 
   const previewHtml = useMemo(() => {
     if (!currentPreviewDelegate) return '';
-    // 'school' reuses the multi-round template with feeSchoolFixed override
-    const raw = (templateType === 'priority') ? PRIORITY_EMAIL_TEMPLATE : MULTI_ROUND_EMAIL_TEMPLATE;
+    const raw = (templateType === 'priority') 
+      ? PRIORITY_EMAIL_TEMPLATE 
+      : (templateType === 'r2' || (templateType === 'multi' && activeRound.slug === 'r2'))
+        ? ROUND_2_EMAIL_TEMPLATE 
+        : MULTI_ROUND_EMAIL_TEMPLATE;
     return hydrateTemplate(raw, {
       delegateName: currentPreviewDelegate.name,
       delegateEmail: currentPreviewDelegate.email,
@@ -120,7 +129,8 @@ export const EmailModal = ({ isOpen, onClose, targetDelegates, activeRound, onSe
                 className="w-full bg-sset-card border border-sset-border rounded-lg p-2 text-sset-text focus:outline-none focus:border-sset-gold font-medium"
               >
                 <option value="priority">Priority Round Portfolio Allotment</option>
-                <option value="multi">Round 1 &amp; 2 Portfolio + Logistics</option>
+                <option value="multi">Round 1 Portfolio + Logistics</option>
+                <option value="r2">Round 2 Portfolio + Accom &amp; Transport Links</option>
                 <option value="school">School Delegation Allotment</option>
               </select>
               {templateType === 'school' && (

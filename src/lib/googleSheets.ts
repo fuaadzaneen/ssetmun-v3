@@ -119,18 +119,18 @@ export async function fetchSheetData(
         return hasCommittee && hasLevel;
       });
 
-      // Fallback for First Round Registrations sheet where headers lack committee names
+      // Fallback for First & Second Round Registrations sheets where headers lack committee names
       if (startIdx === -1) {
         const HARDCODED_MAP: Record<string, Record<number, number>> = {
           'unga': { 1: 14, 2: 17, 3: 20 },
           'uncsw': { 1: 23, 2: 26, 3: 29 },
           'uncnd': { 1: 32, 2: 35, 3: 38 },
-          'aippm': { 1: 41, 2: 44, 3: 47 },
-          'who': { 1: 50, 2: 53, 3: 56 }
+          'who': { 1: 41, 2: 44, 3: 47 },
+          'aippm': { 1: 50, 2: 53, 3: 56 }
         };
         
-        // Find the base search key for WHO as it might be parsed differently
-        const normalizedKey = searchKey.includes('who') ? 'who' : searchKey;
+        // Find the base search key for WHO or AIPPM as it might be parsed differently
+        const normalizedKey = searchKey.includes('who') ? 'who' : searchKey.includes('aippm') ? 'aippm' : searchKey;
         
         if (HARDCODED_MAP[normalizedKey] && HARDCODED_MAP[normalizedKey][prefLevel]) {
           const fallbackIdx = HARDCODED_MAP[normalizedKey][prefLevel];
@@ -190,5 +190,5 @@ export async function fetchSheetData(
       travel_assistance,
       queries_suggestions,
     };
-  }).filter((r) => r.email && r.name);
+  }).filter((r) => r.email && r.email.includes('@') && r.name);
 }

@@ -232,6 +232,46 @@ export const MULTI_ROUND_EMAIL_TEMPLATE = `<!DOCTYPE html>
 </body>
 </html>`;
 
+export const ROUND_2_LOGISTICS_BLOCK = `
+              <div style="border-radius:16px;border:1px solid rgba(204,169,84,0.6);padding:20px;margin-top:18px;background:#0f2a2d !important;">
+                <p style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#ccb154 !important;margin:0 0 12px 0;">Logistics: Transportation &amp; Accommodation</p>
+                
+                <div style="margin-bottom:14px;border-bottom:1px solid rgba(204,169,84,0.25);padding-bottom:14px;">
+                  <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0 0 6px 0;">
+                    🚗 If you wish to avail transportation, please fill in the following form:<br>
+                    <span style="font-size:11px;color:#a9b3b8 !important;font-style:italic;">(Note: if you have opted for accommodation, you need not fill the transportation form)</span>
+                  </p>
+                  <p style="margin:8px 0 0 0;">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc30XxGw8JYTKWnfNxVE1LSKeeB5s0xf7UJYUfYniVKyR46cQ/viewform?usp=dialog" style="display:inline-block;padding:7px 16px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#000000 !important;background-color:#ccb154 !important;border-radius:6px;">
+                      Fill Transportation Form &rarr;
+                    </a>
+                  </p>
+                  <p style="font-size:11px;margin:6px 0 0 0;">
+                    <span style="color:#a9b3b8 !important;">Transport Link:</span> <a href="https://docs.google.com/forms/d/e/1FAIpQLSc30XxGw8JYTKWnfNxVE1LSKeeB5s0xf7UJYUfYniVKyR46cQ/viewform?usp=dialog" style="color:#ccb154 !important;word-break:break-all;">https://docs.google.com/forms/d/e/1FAIpQLSc30XxGw8JYTKWnfNxVE1LSKeeB5s0xf7UJYUfYniVKyR46cQ/viewform?usp=dialog</a>
+                  </p>
+                </div>
+
+                <div>
+                  <p style="font-size:13px;line-height:1.6;color:#dfe4e6 !important;margin:0 0 6px 0;">
+                    🏨 If you wish to avail accommodation facilities, please fill the following form:
+                  </p>
+                  <p style="margin:8px 0 0 0;">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc0Ow9ObwMykEz-13J1aPto1ClyYmEK1xsS5RLa4R5SA-bDHw/viewform?usp=dialog" style="display:inline-block;padding:7px 16px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#000000 !important;background-color:#ccb154 !important;border-radius:6px;">
+                      Fill Accommodation Form &rarr;
+                    </a>
+                  </p>
+                  <p style="font-size:11px;margin:6px 0 0 0;">
+                    <span style="color:#a9b3b8 !important;">Accom form link:</span> <a href="https://docs.google.com/forms/d/e/1FAIpQLSc0Ow9ObwMykEz-13J1aPto1ClyYmEK1xsS5RLa4R5SA-bDHw/viewform?usp=dialog" style="color:#ccb154 !important;word-break:break-all;">https://docs.google.com/forms/d/e/1FAIpQLSc0Ow9ObwMykEz-13J1aPto1ClyYmEK1xsS5RLa4R5SA-bDHw/viewform?usp=dialog</a>
+                  </p>
+                </div>
+              </div>
+`;
+
+export const ROUND_2_EMAIL_TEMPLATE = MULTI_ROUND_EMAIL_TEMPLATE.replace(
+  '<div style="text-align:center;margin-top:26px;">',
+  ROUND_2_LOGISTICS_BLOCK + '\n              <div style="text-align:center;margin-top:26px;">'
+);
+
 export function hydrateTemplate(
   rawTemplate: string,
   params: {

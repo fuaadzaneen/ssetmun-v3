@@ -76,11 +76,43 @@ export default function DashboardPage() {
     }
   }, []);
 
+  // Load rounds from database / API
+  const loadRounds = useCallback(async () => {
+    try {
+      const res = await fetch('/api/rounds', { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.rounds) && data.rounds.length > 0) {
+        setRounds(data.rounds);
+        setActiveRound((curr) => data.rounds.find((r: Round) => r.slug === curr.slug) || data.rounds[0]);
+      }
+    } catch (err) {
+      console.error('Failed to load rounds:', err);
+    }
+  }, []);
+
   // Load on mount
   useEffect(() => {
+    loadRounds();
     loadDelegates(activeRound.slug);
     loadSchools(activeRound.slug);
   }, []);
+
+  // Handle Save Round Settings
+  const handleSaveRoundSettings = async (updatedRound: Round) => {
+    setRounds((prev) => prev.map((r) => (r.id === updatedRound.id ? updatedRound : r)));
+    if (activeRound.id === updatedRound.id) {
+      setActiveRound(updatedRound);
+    }
+    try {
+      await fetch('/api/rounds', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedRound),
+      });
+    } catch (err) {
+      console.error('Failed to persist round settings:', err);
+    }
+  };
 
   // Reload when round changes
   const handleSelectRound = (round: Round) => {
@@ -494,12 +526,7 @@ export default function DashboardPage() {
         isOpen={isRoundSettingsOpen}
         onClose={() => setIsRoundSettingsOpen(false)}
         round={activeRound}
-        onSave={(updatedRound) => {
-          setRounds((prev) => prev.map((r) => (r.id === updatedRound.id ? updatedRound : r)));
-          if (activeRound.id === updatedRound.id) {
-            setActiveRound(updatedRound);
-          }
-        }}
+        onSave={handleSaveRoundSettings}
       />
 
       <HistoryModal

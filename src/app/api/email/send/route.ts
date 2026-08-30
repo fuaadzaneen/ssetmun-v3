@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { hydrateTemplate, PRIORITY_EMAIL_TEMPLATE, MULTI_ROUND_EMAIL_TEMPLATE } from '@/lib/emailTemplates';
+import { hydrateTemplate, PRIORITY_EMAIL_TEMPLATE, MULTI_ROUND_EMAIL_TEMPLATE, ROUND_2_EMAIL_TEMPLATE } from '@/lib/emailTemplates';
 import { isSupabaseConfigured, supabaseAdmin } from '@/lib/supabase';
 
 const smtpEmail = process.env.SMTP_EMAIL;
@@ -43,7 +43,11 @@ export async function POST(req: Request) {
     const results = [];
 
     for (const del of delegates) {
-      const templateContent = templateType === 'priority' ? PRIORITY_EMAIL_TEMPLATE : MULTI_ROUND_EMAIL_TEMPLATE;
+      const templateContent = templateType === 'priority' 
+        ? PRIORITY_EMAIL_TEMPLATE 
+        : (templateType === 'r2' || (templateType === 'multi' && roundSlug === 'r2')) 
+          ? ROUND_2_EMAIL_TEMPLATE 
+          : MULTI_ROUND_EMAIL_TEMPLATE;
       const html = hydrateTemplate(templateContent, {
         delegateName: del.name,
         delegateEmail: del.email,
